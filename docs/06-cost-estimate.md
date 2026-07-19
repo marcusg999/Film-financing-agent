@@ -62,9 +62,72 @@ team (your Step 7 choice).
 
 - **Contact-enrichment API** (flagged, deferred): typically **$100–$500/mo** depending
   on lookup volume — adds ability to *find* (not just verify) contacts.
-- **OpusData / IMDb commercial license** (for reliable budgets): **quote-based**,
-  commonly **$1k+/mo** — only worth it if budget coverage becomes the binding
-  constraint on qualification quality.
+
+The licensed **commercial + trade data** options get their own section below, because
+they're the biggest lever on quality *and* the biggest way to overspend if bought in
+the wrong order.
+
+## Optimizing the licensed-data budget (commercial + trade data)
+
+The v1 plan is public-data-only. These licenses are the paid upgrades that close
+specific quality gaps. **Most are quote-based / enterprise** — vendors don't publish
+fixed prices — so the figures below are **order-of-magnitude planning ranges to
+confirm with a real quote**, not quotes themselves.
+
+### The options — what each buys, and its price posture
+
+| Source | Gap it closes | Access | Cost posture (2026, planning-grade) |
+|--------|---------------|--------|--------------------------------------|
+| **OpusData (The Numbers)** | **Reliable film budgets** — the single weakest link in v1 (budgets are `unknown`/`estimated` without it) | Subscription API or **one-time data extracts** | Entry subscription advertised **from ~$19/mo (~$228/yr)**; commercial/bulk tiers **quote-based**; one-time extracts priced on request. **Cheapest high-value option.** |
+| **Cinando (Marché du Film)** | **Sales agents, MG-providing distributors, buyers, and their contacts** — directly fills a whole funding-type slice + contactability | Standalone subscription (quote) **or bundled free** with Marché du Film / AFM accreditation (1-yr access) | Standalone not public; **accreditation route ≈ a few hundred €/yr (~$50–100/mo amortized)** and also gets you market access. Best value via accreditation. |
+| **IMDb commercial data** (Essential Metadata, AWS Data Exchange) | **Comprehensive credits + metadata** → better film/entity coverage and stronger entity resolution | Bulk JSON / GraphQL API via AWS Data Exchange; `imdb-licensing@imdb.com` | **Quote-based, use-case-priced, enterprise.** Plan **~$500–2,000+/mo** order-of-magnitude. (For AWS Enterprise customers, 100% of the fee counts toward EDP burndown.) |
+| **Variety Insight** and/or **Gracenote Studio System** | **Deal tracking, talent/financing attachments, exec contacts** → warm-signal + richer contacts | Enterprise subscription; free trials offered | **Enterprise; "several thousand $/yr" each**, quote-based. Plan **~$300–1,000+/mo amortized** per product. |
+| **Licensed trade-press feed / news API** (e.g. PMC-family) | **Full-text deal announcements, legally** — richer financing signal than the permitted RSS-only path | Licensed API / feed (quote) | **Quote-based.** Only pursue if trade-press signal becomes the binding constraint. |
+
+### The optimization rule (buy the cheapest license that clears the current bottleneck)
+
+Do **not** buy a data stack up front. Each license is justified only when the
+**labeled eval set** ([05](05-verification-and-honest-math.md)) shows a specific
+metric is capped by missing data. Buy in ascending order of $/quality:
+
+1. **Stay on public data** until the eval set shows a real ceiling.
+2. **First purchase → OpusData budgets.** Budget provenance is the weakest link and
+   this is the cheapest fix; start with **one-time extracts** for the films already in
+   the corpus before committing to a subscription. Recheck: does `qualified_sub10m`
+   coverage/precision move?
+3. **Second → Cinando via accreditation**, if the sales-agent / MG-distributor / buyer
+   slice and their contacts are the gap. Cheap, and doubles as market access.
+4. **Third → IMDb commercial**, only if credit coverage / entity-resolution quality is
+   the bottleneck (lots of `insufficient_data` from missing credits). This is the step
+   up into real money — justify it against a measured resolution/coverage gain.
+5. **Last → Variety Insight / Studio System** (and/or a licensed trade-press feed),
+   only if warm-signal deal-tracking and exec contacts are the binding constraint and
+   budget allows. Highest cost, narrowest marginal gain for *this* tool.
+
+**Cost-optimization tactics baked in:** prefer **one-time extracts over subscriptions**
+where the corpus is fairly static; **annual over per-seat** where offered; exploit
+**accreditation bundles** (Cinando); take **free trials** to measure the eval-set lift
+*before* paying; and re-run the eval after each purchase — a license that doesn't move
+a quality metric gets dropped at renewal.
+
+### Tiered licensed-data budget
+
+| Tier | What's licensed | Added cost (planning-grade) | When it's worth it |
+|------|-----------------|-----------------------------|--------------------|
+| **0 — Public only** (the v1 plan) | none | **$0** | Default. Ship and measure first. |
+| **1 — Budget fix** | OpusData (extracts → entry sub) | **+~$20–250/mo** | Budget `unknown` rate is capping qualification. **Best $/value — most builds stop here.** |
+| **2 — + Sales/buyer data** | Tier 1 + Cinando (accreditation) | **+~$50–100/mo amortized** | You need sales agents / MG distributors / buyers + their contacts. |
+| **3 — + Comprehensive credits** | Tier 2 + IMDb commercial | **+~$500–2,000+/mo** | Credit coverage / entity resolution is the bottleneck. |
+| **4 — + Enterprise deal/contacts** | Tier 3 + Variety Insight and/or Studio System (± trade-press feed) | **+~$300–1,000+/mo per product** | Warm-signal deal-tracking + exec contacts are the constraint and budget is ample. |
+
+- **Full stack (all tiers) could run ~$1.5k–5k+/mo** — that's the *ceiling*, not the
+  recommendation.
+- **Recommended posture: Tier 0 → Tier 1 (maybe Tier 2).** Everything above Tier 2 is
+  enterprise-priced and should be triggered by a measured gap, not bought on spec.
+
+> Reality check: exact pricing for IMDb, Cinando (standalone), Variety Insight, and
+> Studio System is **quote-only** and use-case-dependent — get real quotes before
+> budgeting any of Tiers 3–4. The ranges here are to size the decision, not to commit.
 
 ## Build cost (effort to get it working)
 
@@ -227,3 +290,12 @@ per-source extraction cost.
 
 > As with the infra pricing: re-check with real bids before committing. Labor rates
 > move and vary far more than cloud pricing.
+
+## Licensed-data sources (checked during planning, 2026)
+
+- IMDb commercial data / Essential Metadata (AWS Data Exchange, quote-based, imdb-licensing@imdb.com) — https://aws.amazon.com/marketplace/pp/prodview-wdqq4hg3bcbws ; https://developer.imdb.com/
+- The Numbers / OpusData (subscription from ~$19/mo; commercial + one-time extracts on request) — https://www.the-numbers.com/data-services ; https://www.opusdata.com/dataservices.php
+- Cinando / Marché du Film (B2B sales-agent/buyer database; bundled with accreditation) — https://www.marchedufilm.com/about/cinando/ ; https://en.wikipedia.org/wiki/Cinando
+- Variety Insight / Gracenote Studio System (enterprise, quote-based, free trials) — https://gracenote.com/products/studio-system/ ; https://shop.gracenote.com/products/studio-system
+
+> Quote-based pricing changes and is use-case-dependent — confirm with the vendor before committing.
