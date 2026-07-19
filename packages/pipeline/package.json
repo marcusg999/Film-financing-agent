@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "tsx src/worker.ts",
+    "ingest:wikidata": "tsx src/cli/ingest-wikidata.ts",
     "test": "node --import tsx --test test/*.test.ts"
   },
   "dependencies": {
