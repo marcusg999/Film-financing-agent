@@ -41,6 +41,11 @@ team (your Step 7 choice).
 > the verified-contact set grows (verification re-checks). Both are controllable with
 > the Haiku/Opus split and the 90-day re-check window.
 
+> **If you're building the MVP yourself in this environment**, skip to
+> [Setup + run cost for a solo build](#setup--run-cost-for-a-solo-build-you--claude-in-this-environment)
+> below — that's the section keyed to *your* case (no labor line; ~$0 to set up,
+> ~$75–200/mo to run, Claude API the main cost).
+
 ## Cost-control levers built into the design
 
 - **Model routing:** default to Haiku; escalate to Opus only for ambiguous
@@ -96,6 +101,49 @@ Separate from ongoing run-rate — this is what you actually pay while building:
 | Email verification (Phase 4 on) | **$15–60/mo** | Scales with contact count. |
 | **Cash to first working v1** | **~$700–1,600 total** | Excludes engineering labor and any deferred licenses/enrichment. |
 
+## Setup + run cost for a solo build (you + Claude, in this environment)
+
+This is the version that matters if **you** build the whole MVP here: there's no
+engineering-labor line, so the only question is cash to stand it up and keep it
+running. Pricing below was checked against current (2026) plans (sources at bottom).
+
+### What you actually sign up for
+
+| Service | Free tier (start here) | Paid when you outgrow it | Notes for this build |
+|---------|------------------------|--------------------------|----------------------|
+| **Supabase** | **$0** — 500 MB DB, 50k MAU auth, pgvector included | **Pro $25/mo** (8 GB DB, backups, no pausing) | Free tier **pauses a project after 1 week idle and has no backups** — fine for early dev, but move to Pro before you're relying on the data. |
+| **Railway** | **$5 trial credit (30 days), no card** | **Hobby $5/mo** (includes $5 usage) | One dashboard + one worker fits in/near the $5 usage. |
+| **Firecrawl** | **$0** — 1,000 pages/mo, no card | **Hobby $16/mo** (5,000 credits) | Free tier covers early dev; upgrade during corpus backfill. **Stealth mode = 5× credits** — avoid bot-protected sites (we don't scrape those anyway). |
+| **Claude API** | none (pay-as-you-go) | usage-based | **The dominant real cost.** Iteration + the initial backfill classification pass (Opus) is where the money goes. |
+| **Email verification** | free tiers ~100–1,000 checks | ~$0.003–0.008/check | Not needed until Phase 4. $0 to start. |
+| **SEC EDGAR / Wikidata / Companies House** | **$0** (public/official) | — | Free forever; declared User-Agent + rate limits only. |
+| **Domain** (optional for MVP) | — | ~$10–15/yr | Skip until you need a public dashboard URL. |
+
+### Cash, tiered honestly
+
+- **Rock-bottom (all free tiers): ~$30–120/mo** — infra effectively **$0** (Supabase
+  free, Railway trial, Firecrawl free), and essentially **all of it is Claude API
+  tokens**. Trade-off: Supabase pausing + no backups, and the 1,000-page/mo crawl cap.
+  Good for the first few weeks of Phase 0–1 dev.
+- **Recommended lean MVP: ~$75–200/mo** —
+  Supabase Pro **$25** + Railway **$5** + Firecrawl Hobby **$16** + Claude API
+  **$30–150** + email verify **$0–15**. This is the realistic steady number while you
+  build here.
+- **One-time-ish backfill (building the initial corpus):** an extra **~$100–400** in
+  Claude + Firecrawl spend, spread over the weeks you build Phases 1–3, front-loaded
+  by the Opus classification pass. (The $400–1,000 figure earlier assumes a *full*
+  multi-thousand-entity corpus; an initial MVP corpus is smaller.)
+
+### Bottom line for a solo build here
+
+- **To set up: ~$0 out of pocket.** Lean on free tiers; the only account that bills
+  from day one is Claude API, and only as you make calls.
+- **To run during the build: ~$75–200/mo**, of which **Claude API is the swing
+  factor** — controllable via the Haiku-for-extraction / Opus-only-for-hard-calls
+  split, prompt caching, and idempotent (no re-spend) ingestion already in the design.
+- **Deferred and still $0 until you choose them:** contact-enrichment API
+  ($100–500/mo) and licensed budget data ($1k+/mo). The MVP never requires them.
+
 ### The honest caveat on build cost
 
 The dominant real cost is **engineering time on Phase 2** (entity resolution +
@@ -105,3 +153,12 @@ $100–500/mo enrichment) are the lever — but they're deferred precisely so yo
 pay for them until the free path proves insufficient. The numbers here are
 planning-grade ranges; they'll tighten once Phase 0–1 reveal real corpus size and
 per-source extraction cost.
+
+## Pricing sources (checked during planning, 2026)
+
+- Firecrawl pricing — https://www.firecrawl.dev/pricing (Free 1,000 pages/mo; Hobby $16/mo/5,000 credits; stealth mode 5× credits).
+- Supabase pricing — https://supabase.com/pricing (Free: 500 MB DB, 50k MAU, pauses after 1 week idle, no backups; Pro $25/mo/project).
+- Railway pricing — https://docs.railway.com/pricing/plans (Trial $5 credit/30 days; Hobby $5/mo incl. $5 usage).
+- Claude API pricing — see the `claude-api` reference / https://www.anthropic.com/pricing (pay-as-you-go; Haiko/Opus split drives cost).
+
+> Re-check before committing spend — provider plans and limits change.
