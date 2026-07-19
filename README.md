@@ -11,9 +11,14 @@ The plan lives in [`docs/`](docs/00-README.md). The build is underway per
 [docs/07-roadmap.md](docs/07-roadmap.md):
 
 - ✅ **Phase 0** — schema with integrity constraints (budget provenance, evidence-required
-  claims), ToS source gate (DB trigger + code), pg-boss queue skeleton, dashboard skeleton.
-  11 tests green against Postgres 16 + pgvector.
-- ⏳ **Phase 1** — SEC EDGAR + Wikidata ingestion (next).
+  claims), ToS source gate (DB trigger + code), pg-boss queue skeleton, dashboard
+  skeleton with fail-closed auth gate.
+- ✅ **Phase 1 (code)** — Wikidata SPARQL + SEC EDGAR Form C ingestion, idempotent,
+  evidence on every claim, fixture-tested (20 tests green). Live backfill runs on
+  Railway per [docs/11-deployment.md](docs/11-deployment.md) — this container has
+  no data-host egress.
+- ⏳ **Phase 2** — entity resolution + cluster-rule qualification (needs
+  `ANTHROPIC_API_KEY` for the money-vs-craft classifier).
 
 ### Development
 
