@@ -60,6 +60,25 @@ the full optimization framework.
 | Professional fee — build & delivery | **to be set by Marcus** (suggested: fixed project fee, ~3–5 focused weeks) |
 | **To start** | **~$900–1,900 + fee** |
 
+## For comparison — the agency route (negotiation leverage)
+
+The same capability, commissioned from a software/data agency instead of built lean:
+
+| | This engagement | Commissioned from an agency |
+|---|-----------------|------------------------------|
+| To build / start | **$900–1,900** + fee (by discussion) | **$80k–250k** (industry avg ≈ $132k) |
+| Ongoing | $115–350 / mo (maintenance included) | $15k–50k / yr maintenance + data on top |
+| Time to first list | ~2 weeks | 5–13 months typical |
+
+Grounding (2026 benchmarks, not quotes): mid-complexity custom data platform
+**$75k–250k**; Clutch average custom project **≈ $132k**; annual maintenance
+**15–25%** of build. Sources: [ADEVS](https://adevs.com/blog/custom-software-development-costs/),
+[Andersen](https://andersenlab.com/blueprint/custom-software-development-costs-in-2026),
+[DataForest](https://dataforest.ai/blog/data-platform-development-cost).
+
+**The leverage line:** *Same outcome, a fraction of the cost — you're funding the
+build itself, not an agency's team, project managers, and margin.*
+
 ## Delivery
 
 - **Weeks 1–2** — first ranked draft from hard evidence (filings + trade announcements).

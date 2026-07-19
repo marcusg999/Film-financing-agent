@@ -249,6 +249,25 @@ next to traditional labor — which is the entire point of the comparison.
 | Calendar time to v1 | ~6–10 wks focused / 9–15 part-time | ~8–14 wks (team parallelism offset by coordination) |
 | **All-in cash to first working v1** | **~$700–1,600** (mostly Claude tokens) | **~$11k–157k** (labor dominates) |
 
+### Enterprise / agency benchmark (for client-facing framing)
+
+The "traditional" column above prices *labor for the same scope*. If a client instead
+**commissions the whole product from a software/data agency** — discovery, design,
+build, QA, PM, and margin — the market number is higher and more useful for a value
+anchor in a proposal:
+
+- Mid-complexity **custom data platform: ~$75k–250k** to build; **Clutch 2026 average
+  custom project ≈ $132k**; most mid-size US projects **$80k–350k**.
+- **Annual maintenance: 15–25% of build** (~$15k–50k/yr here) + third-party/data on top.
+- Typical timeline **5–13 months** with a 4–6 person team.
+
+This is the figure used in the [producer brief](10-producer-brief.md) to contrast a
+lean ~$900–1,900 + fee engagement against an ~$80k–250k agency build. Sources:
+[ADEVS](https://adevs.com/blog/custom-software-development-costs/),
+[Andersen Lab](https://andersenlab.com/blueprint/custom-software-development-costs-in-2026),
+[DataForest](https://dataforest.ai/blog/data-platform-development-cost). Benchmarks,
+not quotes — scope defines the number.
+
 ### Honest caveats on the comparison
 
 - **Rates vary enormously** by geography, seniority, and stack — treat these as
