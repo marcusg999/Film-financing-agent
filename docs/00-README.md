@@ -20,6 +20,7 @@ honestly, legally, and without over-promising completeness.
 | [07-roadmap.md](07-roadmap.md) | Phased build: what ships first, what's deferred. |
 | [08-gotchas.md](08-gotchas.md) | Running list of traps to avoid. Seeded and expanded. |
 | [09-legal-ethical-guardrails.md](09-legal-ethical-guardrails.md) | ToS per source, personal-data minimization, GDPR/CAN-SPAM posture. |
+| [10-producer-brief.md](10-producer-brief.md) | Scoped client deliverable — horror/sci-fi financiers, US/Europe/Canada, last 10 years. Shareable web + PDF one-pager. |
 
 ## Scope decisions (from the Step 1 interview)
 

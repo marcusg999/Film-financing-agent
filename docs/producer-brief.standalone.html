@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genre Financing Map — Producer Brief</title>
+<style>
+  html,body{margin:0;padding:0}
+  html,body,*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:14mm 12mm}
+  .reveal{animation:none!important;opacity:1!important;transform:none!important}
+  .pb{padding-left:0!important;padding-right:0!important;padding-bottom:24px!important}
+  .masthead{padding-top:8px!important}
+  section{break-inside:avoid}
+  .record,.tier,.card,.promise .col,.phase,.check li,blockquote{break-inside:avoid}
+</style>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#F4F5F7; --panel:#FFFFFF; --panel-2:#FBFBFC;
+    --ink:#14171E; --muted:#59626F; --faint:#8A93A2;
+    --line:rgba(20,23,30,.12); --line-2:rgba(20,23,30,.07);
+    --amber:#B26B1E; --amber-bright:#C9812A; --amber-soft:rgba(178,107,30,.10);
+    --cyan:#2C7E8C;
+    --glow:rgba(201,129,42,.12); --scan:rgba(20,23,30,.015);
+    --good:#2F7D4F; --warn:#9A5B1E;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ground:#0A0D13; --panel:#12161F; --panel-2:#0E121A;
+      --ink:#E7E9ED; --muted:#9AA3B2; --faint:#6A7484;
+      --line:rgba(230,235,245,.13); --line-2:rgba(230,235,245,.06);
+      --amber:#E9A23B; --amber-bright:#F3B458; --amber-soft:rgba(233,162,59,.12);
+      --cyan:#5FD0DE;
+      --glow:rgba(233,162,59,.16); --scan:rgba(230,235,245,.02);
+      --good:#5BC98A; --warn:#E9A23B;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#F4F5F7; --panel:#FFFFFF; --panel-2:#FBFBFC;
+    --ink:#14171E; --muted:#59626F; --faint:#8A93A2;
+    --line:rgba(20,23,30,.12); --line-2:rgba(20,23,30,.07);
+    --amber:#B26B1E; --amber-bright:#C9812A; --amber-soft:rgba(178,107,30,.10);
+    --cyan:#2C7E8C; --glow:rgba(201,129,42,.12); --scan:rgba(20,23,30,.015);
+    --good:#2F7D4F; --warn:#9A5B1E;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0A0D13; --panel:#12161F; --panel-2:#0E121A;
+    --ink:#E7E9ED; --muted:#9AA3B2; --faint:#6A7484;
+    --line:rgba(230,235,245,.13); --line-2:rgba(230,235,245,.06);
+    --amber:#E9A23B; --amber-bright:#F3B458; --amber-soft:rgba(233,162,59,.12);
+    --cyan:#5FD0DE; --glow:rgba(233,162,59,.16); --scan:rgba(230,235,245,.02);
+    --good:#5BC98A; --warn:#E9A23B;
+  }
+
+  *{box-sizing:border-box}
+  .pb{
+    --sans:"Helvetica Neue",Arial,system-ui,-apple-system,sans-serif;
+    --serif:Georgia,"Times New Roman",Cambria,serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    background:var(--ground); color:var(--ink);
+    font-family:var(--serif); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    padding:0 24px 96px;
+  }
+  .wrap{max-width:920px; margin:0 auto}
+  .pb p{max-width:66ch}
+
+  /* ---- type ---- */
+  .eyebrow{
+    font-family:var(--sans); font-size:12px; font-weight:700;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--amber);
+    display:flex; align-items:center; gap:12px;
+  }
+  .eyebrow::after{content:""; height:1px; flex:1; background:var(--line)}
+  h1{
+    font-family:var(--sans); font-weight:800; letter-spacing:-.02em;
+    line-height:.98; text-wrap:balance; margin:0;
+    font-size:clamp(38px,7vw,76px); text-transform:uppercase;
+  }
+  h2{
+    font-family:var(--sans); font-weight:700; letter-spacing:.02em;
+    text-transform:uppercase; font-size:15px; color:var(--muted);
+    margin:0 0 22px; display:flex; align-items:baseline; gap:14px;
+  }
+  h2 .n{color:var(--amber); font-variant-numeric:tabular-nums; font-size:13px}
+  h2::after{content:""; height:1px; flex:1; background:var(--line-2); align-self:center}
+  h3{font-family:var(--sans); font-weight:700; font-size:16px; letter-spacing:-.01em; margin:0 0 6px}
+  .lede{font-size:clamp(18px,2.3vw,22px); line-height:1.5; color:var(--ink); margin:26px 0 0; max-width:60ch}
+  .sub{color:var(--muted)}
+  strong{font-weight:700}
+  .amber{color:var(--amber-bright)}
+
+  /* ---- masthead ---- */
+  .masthead{position:relative; padding:80px 0 44px; overflow:hidden}
+  .masthead::before{
+    content:""; position:absolute; inset:-40% -20% auto -20%; height:520px; z-index:0;
+    background:radial-gradient(60% 100% at 30% 0%,var(--glow),transparent 70%);
+    pointer-events:none;
+  }
+  .masthead::after{
+    content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:repeating-linear-gradient(0deg,var(--scan) 0 1px,transparent 1px 4px);
+    mask-image:linear-gradient(180deg,#000,transparent 75%);
+  }
+  .masthead > *{position:relative; z-index:1}
+  .metastrip{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:34px;
+    font-family:var(--sans);
+  }
+  .chip{
+    font-size:12.5px; font-weight:600; letter-spacing:.04em;
+    padding:7px 13px; border:1px solid var(--line); border-radius:999px;
+    color:var(--muted); background:var(--panel-2); white-space:nowrap;
+  }
+  .chip b{color:var(--ink); font-weight:700}
+  .chip.hot{border-color:color-mix(in srgb,var(--amber) 45%,var(--line)); color:var(--amber-bright)}
+  .chip.cool{border-color:color-mix(in srgb,var(--cyan) 45%,var(--line)); color:var(--cyan)}
+
+  /* ---- sections ---- */
+  section{padding-top:56px}
+  .rule{height:1px; background:var(--line); margin-top:56px}
+
+  blockquote{
+    margin:0; padding:26px 28px; border-left:3px solid var(--amber);
+    background:var(--panel); border-radius:0 10px 10px 0;
+    font-size:clamp(19px,2.6vw,26px); line-height:1.4; font-style:italic;
+  }
+  blockquote .attr{
+    display:block; margin-top:14px; font-family:var(--sans); font-style:normal;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+  }
+
+  .grid{display:grid; gap:16px}
+  @media(min-width:680px){ .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} }
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:22px 22px}
+  .card p{margin:.4em 0 0; color:var(--muted); font-size:15px}
+
+  /* deliverable list */
+  .deliver{list-style:none; padding:0; margin:0; display:grid; gap:2px}
+  .deliver li{display:flex; gap:14px; padding:14px 2px; border-bottom:1px solid var(--line-2)}
+  .deliver li:last-child{border-bottom:0}
+  .deliver .k{font-family:var(--sans); font-weight:700; font-size:14px; min-width:150px; color:var(--ink)}
+  .deliver .v{color:var(--muted); font-size:15px}
+
+  /* sample record */
+  .record{background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .record .top{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); background:var(--panel-2)}
+  .record .name{font-family:var(--sans); font-weight:800; font-size:19px; letter-spacing:-.01em}
+  .badge{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:5px 10px; border-radius:6px; background:var(--amber-soft); color:var(--amber-bright); white-space:nowrap}
+  .record .body{display:grid; gap:0; padding:6px 20px 12px}
+  .record .row{display:flex; gap:16px; padding:11px 0; border-bottom:1px solid var(--line-2); font-size:14.5px}
+  .record .row:last-child{border-bottom:0}
+  .record .rk{font-family:var(--sans); font-weight:600; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); min-width:140px}
+  .record .rv{color:var(--ink)}
+  .tag{font-family:var(--sans); font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--muted); margin-right:6px}
+  .conf{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--good)}
+  .caption{font-family:var(--sans); font-size:12px; color:var(--faint); letter-spacing:.03em; margin-top:10px}
+
+  /* can / can't */
+  .promise{display:grid; gap:16px}
+  @media(min-width:680px){ .promise{grid-template-columns:1fr 1fr} }
+  .promise .col{border:1px solid var(--line); border-radius:12px; padding:22px; background:var(--panel)}
+  .promise h3{display:flex; align-items:center; gap:10px}
+  .promise .mk{font-family:var(--sans); font-weight:800; font-size:18px; line-height:1}
+  .col.yes .mk{color:var(--good)} .col.no .mk{color:var(--warn)}
+  .promise ul{margin:14px 0 0; padding:0; list-style:none; display:grid; gap:12px}
+  .promise li{display:flex; gap:11px; font-size:15px; color:var(--muted); line-height:1.45}
+  .promise li::before{content:""; margin-top:9px; width:6px; height:6px; border-radius:50%; flex:none; background:var(--faint)}
+  .col.yes li::before{background:var(--good)} .col.no li::before{background:var(--warn)}
+
+  /* tiers */
+  .tiers{display:grid; gap:12px}
+  .tier{display:grid; grid-template-columns:1fr auto; gap:6px 18px; align-items:start; padding:18px 20px; border:1px solid var(--line); border-radius:11px; background:var(--panel)}
+  .tier.rec{border-color:color-mix(in srgb,var(--amber) 55%,var(--line)); background:linear-gradient(180deg,var(--amber-soft),transparent)}
+  .tier .tname{font-family:var(--sans); font-weight:700; font-size:15px}
+  .tier .tname .pill{font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--amber-bright); border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line)); padding:2px 7px; border-radius:5px; margin-left:9px}
+  .tier .tdesc{grid-column:1/2; color:var(--muted); font-size:14px; margin-top:2px}
+  .tier .tcost{font-family:var(--sans); font-weight:700; font-size:15px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums}
+  .tier .tcost small{display:block; font-weight:600; font-size:11px; color:var(--faint); letter-spacing:.04em; text-transform:uppercase; margin-top:2px}
+
+  /* figures table */
+  .figs{width:100%; border-collapse:collapse; font-size:15px}
+  .figs th,.figs td{text-align:left; padding:15px 8px; border-bottom:1px solid var(--line-2); vertical-align:top}
+  .figs thead th{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); border-bottom:1px solid var(--line)}
+  .figs td.amt{font-family:var(--sans); font-weight:700; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums}
+  .figs .lbl{font-family:var(--sans); font-weight:700; color:var(--ink)}
+  .figs .note{color:var(--muted); font-size:13.5px; margin-top:3px}
+  .figs tr.fee td{background:var(--amber-soft)}
+  .figs tr.total td{border-top:1px solid var(--line); border-bottom:0}
+  .figs tr.total .lbl{color:var(--amber-bright)}
+
+  /* timeline */
+  .time{display:grid; gap:0}
+  .phase{display:grid; grid-template-columns:132px 1fr; gap:20px; padding:20px 0; border-bottom:1px solid var(--line-2)}
+  .phase:last-child{border-bottom:0}
+  .phase .when{font-family:var(--sans); font-weight:800; font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--amber)}
+  .phase .what h3{margin-bottom:5px}
+  .phase .what p{margin:0; color:var(--muted); font-size:15px}
+
+  /* checklist */
+  .check{list-style:none; padding:0; margin:0; display:grid; gap:12px}
+  .check li{display:flex; gap:14px; align-items:flex-start; padding:16px 18px; border:1px solid var(--line); border-radius:10px; background:var(--panel); font-size:15px}
+  .check .box{font-family:var(--sans); font-weight:800; color:var(--amber); border:1.5px solid var(--amber); width:22px; height:22px; border-radius:5px; display:grid; place-items:center; flex:none; font-size:13px}
+  .check b{font-family:var(--sans); font-size:14.5px}
+
+  footer{margin-top:64px; padding-top:26px; border-top:1px solid var(--line); font-family:var(--sans)}
+  footer .by{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; font-size:13px; color:var(--muted)}
+  footer .by b{color:var(--ink); font-weight:700; letter-spacing:.02em}
+  footer .disc{margin-top:16px; font-size:12px; line-height:1.55; color:var(--faint); max-width:78ch; font-family:var(--serif); font-style:italic}
+
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+  }
+</style>
+
+<div class="pb">
+  <div class="wrap">
+
+    <header class="masthead">
+      <div class="eyebrow reveal">Confidential scope &nbsp;·&nbsp; Prepared for review</div>
+      <h1 class="reveal">The&nbsp;companies<br>funding&nbsp;horror<br>&amp;&nbsp;sci-fi.</h1>
+      <p class="lede reveal">A discovery engine that finds, qualifies, and ranks the financing entities behind horror and science-fiction films across the United States, Europe, and Canada — every one it can evidence from public record, with the money separated from the credits.</p>
+      <div class="metastrip reveal">
+        <span class="chip hot"><b>Horror</b> + <b>Sci-Fi</b></span>
+        <span class="chip cool">US · Europe · Canada</span>
+        <span class="chip">Financing active in the <b>last 10 years</b></span>
+        <span class="chip">Indie band <b>≤ $10M</b> first</span>
+      </div>
+    </header>
+
+    <section>
+      <h2><span class="n">01</span> The ask, in your words</h2>
+      <blockquote>“Basically looking for every movie financing company in the last 10 years that has made horror and sci-fi movies in both America, Europe and Canada.”
+        <span class="attr">— The brief this deliverable is built to answer</span>
+      </blockquote>
+      <p style="margin-top:22px" class="sub">One clarification is built into the design: you asked for companies that <em>made</em> these films — what you actually want is the ones that <strong>put up the money</strong>. A “producer” credit is often creative, not financial. So the engine classifies <strong>money vs. craft</strong> and reports only entities it can evidence as financiers, each with a confidence level.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">02</span> What you receive</h2>
+      <div class="grid g2" style="align-items:start">
+        <ul class="deliver">
+          <li><span class="k">A ranked shortlist</span><span class="v">Financing entities that backed horror/sci-fi in your territories, ordered by how warm the lead is — recent genre activity, budget-band fit, and a reachable contact.</span></li>
+          <li><span class="k">A searchable database</span><span class="v">Filter by genre, territory, budget band, entity type, and recency. Export any cut to a spreadsheet.</span></li>
+          <li><span class="k">Evidence on every row</span><span class="v">Each claim links to its source — a filing, a deal announcement, the fund’s own mandate — with the date it was retrieved.</span></li>
+          <li><span class="k">Verified contacts</span><span class="v">Where a contact exists on the entity’s own public channels, it’s validated before it’s marked usable — never guessed.</span></li>
+          <li><span class="k">A dashboard</span><span class="v">For you and a small team to browse, filter, and pull lists per project.</span></li>
+        </ul>
+        <div>
+          <div class="record">
+            <div class="top">
+              <span class="name">Hollow Lantern Pictures</span>
+              <span class="badge">Qualified · Sub-$10M</span>
+            </div>
+            <div class="body">
+              <div class="row"><span class="rk">Type</span><span class="rv">Production company &amp; equity financier</span></div>
+              <div class="row"><span class="rk">Genre affinity</span><span class="rv"><span class="tag">Horror</span><span class="tag">Sci-Fi</span><span class="tag">Thriller</span></span></div>
+              <div class="row"><span class="rk">Financed films</span><span class="rv">4 with known budgets · $2.5M–$6M · median $3.8M</span></div>
+              <div class="row"><span class="rk">Last genre deal</span><span class="rv">2025 · <span class="conf">recent</span></span></div>
+              <div class="row"><span class="rk">Territory</span><span class="rv">US / UK co-productions</span></div>
+              <div class="row"><span class="rk">Contact</span><span class="rv">Submissions channel · <span class="conf">verified</span></span></div>
+              <div class="row"><span class="rk">Why it qualifies</span><span class="rv">Financier language in 3 deal announcements + 1 SEC filing; median budget under cap; active this year.</span></div>
+            </div>
+          </div>
+          <p class="caption">Illustrative record — the format of a row, not a real listing.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">03</span> Scope, precisely</h2>
+      <div class="grid g3">
+        <div class="card"><h3>Genre</h3><p>Horror and science-fiction, including genre-blend titles that lean into either. Boundary confirmed with you before the run.</p></div>
+        <div class="card"><h3>Territory</h3><p>United States, Europe, and Canada — financiers operating in or co-producing across these markets.</p></div>
+        <div class="card"><h3>Window</h3><p>Financing activity in the last 10 years, dated by the deal — not the film’s release year.</p></div>
+        <div class="card"><h3>Budget band</h3><p>The ≤ $10M indie band first. Widening to all budget levels is a funded add-on, not a re-build.</p></div>
+        <div class="card"><h3>Entity types</h3><p>Companies &amp; funds, sales agents / MG-providing distributors, tax-credit &amp; soft-money bodies, and individual financiers where public.</p></div>
+        <div class="card"><h3>Financed, not filmed</h3><p>Only entities evidenced as putting up money — equity, MG advances, gap loans, soft money — not creative credits.</p></div>
+      </div>
+      <p style="margin-top:20px" class="sub">Genre note worth knowing: horror and sci-fi money is unusually <strong>sales-agent and MG-driven</strong>. Including those entity types isn’t padding — for this genre it’s where a lot of the real money sits.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">04</span> What this can — and can’t — promise</h2>
+      <div class="promise">
+        <div class="col yes">
+          <h3><span class="mk">✓</span> What we deliver</h3>
+          <ul>
+            <li>Every financing entity <strong>discoverable from public record</strong> — filings, trade deal announcements, festival and market data, funds’ own mandates.</li>
+            <li>Each one <strong>correctly qualified</strong> (money vs. craft) and <strong>ranked</strong> by genre-specific warm signal.</li>
+            <li>Provenance and a confidence level on <strong>every figure and every classification</strong>.</li>
+            <li>A living database that refreshes as new deals are announced.</li>
+          </ul>
+        </div>
+        <div class="col no">
+          <h3><span class="mk">✕</span> What we won’t claim</h3>
+          <ul>
+            <li>That it is <strong>“every” financier, full stop</strong>. A large share of sub-$10M genre money is private individuals, family offices, and single-film SPVs that leave <strong>no public trace</strong>.</li>
+            <li>A budget we can’t source — “unknown” is reported honestly, never invented.</li>
+            <li>A contact that isn’t verified — no pattern-guessed emails.</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:20px" class="sub">This honesty is the point of the tool. It delivers <strong>comprehensive and evidenced</strong>, not a false “complete.” The value is a short, correct, reachable list — the kind you can actually act on.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">05</span> What your investment buys — data quality</h2>
+      <p class="sub" style="margin-bottom:22px">The engine runs on free public data by default. Paid data licenses close specific gaps. We buy the cheapest license that clears the current bottleneck — nothing on spec. For this genre ask, two are worth it up front:</p>
+      <div class="tiers">
+        <div class="tier rec">
+          <div class="tname">Budget data — OpusData <span class="pill">Recommended</span></div>
+          <div class="tdesc">Reliable film budgets — the single weakest link in public data. Fixes qualification accuracy for the ≤ $10M cut.</div>
+          <div class="tcost">~$20–250<small>/mo or one-time extract</small></div>
+        </div>
+        <div class="tier rec">
+          <div class="tname">Market data — Cinando (Cannes / AFM) <span class="pill">Recommended</span></div>
+          <div class="tdesc">The B2B database of sales agents, buyers, and distributors — where genre/horror/sci-fi money concentrates. Best value via market accreditation.</div>
+          <div class="tcost">~$50–100<small>/mo amortized</small></div>
+        </div>
+        <div class="tier">
+          <div class="tname">Comprehensive credits — IMDb commercial license</div>
+          <div class="tdesc">Deeper credit coverage and stronger entity matching. Only if coverage becomes the bottleneck.</div>
+          <div class="tcost">~$500–2,000+<small>/mo · optional</small></div>
+        </div>
+        <div class="tier">
+          <div class="tname">Deal tracking — Variety Insight / Studio System</div>
+          <div class="tdesc">Enterprise deal + contact intelligence. Highest cost, narrowest marginal gain here.</div>
+          <div class="tcost">~$300–1,000+<small>/mo · optional</small></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">06</span> The numbers</h2>
+      <div style="overflow-x:auto">
+      <table class="figs">
+        <thead><tr><th>Item</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="lbl">One-time data setup &amp; corpus build</span><div class="note">Extraction, scraping of permitted sources, and initial budget-data extracts to build the genre corpus.</div></td>
+            <td class="amt">$400–900</td>
+          </tr>
+          <tr>
+            <td><span class="lbl">Market-data access — Cinando</span><div class="note">Sales-agent / buyer database via accreditation (1 year). Optional but high-value for genre.</div></td>
+            <td class="amt">$300–700<br><small style="color:var(--faint)">one-time / yr</small></td>
+          </tr>
+          <tr>
+            <td><span class="lbl">Platform &amp; running data</span><div class="note">Database, hosting, scraping, model calls, budget subscription, and contact verification, per month while live.</div></td>
+            <td class="amt">$115–350<br><small style="color:var(--faint)">/mo</small></td>
+          </tr>
+          <tr class="fee">
+            <td><span class="lbl">Professional fee — build &amp; delivery</span><div class="note">My time to build and deliver the scoped genre map. Suggested basis: a fixed project fee for the first full deliverable (roughly 3–5 weeks of focused work).</div></td>
+            <td class="amt">to be set</td>
+          </tr>
+          <tr class="total">
+            <td><span class="lbl">To start</span><div class="note">One-time setup + first month of platform + agreed fee. Optional licenses added only if you want maximum coverage.</div></td>
+            <td class="amt">~$900–1,900<br><small style="color:var(--faint)">+ fee</small></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="caption" style="margin-top:14px">Data-vendor pricing is quote-based and use-case-dependent; figures are planning-grade and confirmed with a real quote before any spend.</p>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">07</span> Delivery</h2>
+      <div class="time">
+        <div class="phase"><div class="when">Weeks 1–2</div><div class="what"><h3>First ranked draft</h3><p>Financiers pulled from hard evidence — securities filings and trade deal announcements. A real list you can react to early.</p></div></div>
+        <div class="phase"><div class="when">Weeks 3–5</div><div class="what"><h3>Breadth &amp; contacts</h3><p>Sales agents, soft-money bodies, and fund / production-company mandates across the US, Europe, and Canada; contacts pulled and verified.</p></div></div>
+        <div class="phase"><div class="when">Weeks 6–8</div><div class="what"><h3>Full delivery</h3><p>Searchable database, ranked shortlist, dashboard, and export — the complete scoped deliverable in your hands.</p></div></div>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section>
+      <h2><span class="n">08</span> To green-light</h2>
+      <ul class="check">
+        <li><span class="box">1</span><span><b>Confirm the genre boundary.</b> &nbsp;Does sci-fi include genre-blend and thriller-adjacent titles, or stay tightly defined?</span></li>
+        <li><span class="box">2</span><span><b>Confirm the territories.</b> &nbsp;“Europe” is broad — which countries matter most (UK, France, Germany, Spain, the Nordics …)?</span></li>
+        <li><span class="box">3</span><span><b>Approve the one-time data setup</b> &nbsp;so the corpus build and quality-data extracts can begin.</span></li>
+        <li><span class="box">4</span><span><b>Agree the professional fee</b> &nbsp;for the build and delivery.</span></li>
+      </ul>
+    </section>
+
+    <footer>
+      <div class="by">
+        <b>Genre Financing Map</b>
+        <span>Discovery deliverable · scoped to horror &amp; sci-fi</span>
+        <span>Prepared by Marcus Gray</span>
+        <span>19 July 2026</span>
+      </div>
+      <p class="disc">“Comprehensive” means every financier discoverable from public record — not a guarantee of completeness. A significant share of sub-$10M genre financing comes from private individuals, family offices, and single-purpose vehicles that leave little or no public trace, and will not appear. All cost figures are planning-grade estimates pending vendor quotes. Data sources are used within their terms of service; prohibited sources are excluded by design.</p>
+    </footer>
+
+  </div>
+</div>
+</body></html>
