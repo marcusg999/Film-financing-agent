@@ -88,10 +88,20 @@ film_id                uuid fk -> films(id)    not null
 role                   financier_role not null
 is_financial           boolean                 -- classifier output: money vs craft
 financier_confidence   claim_confidence not null   -- 0..1
+deal_date              date                    -- when the financing happened/was announced
+deal_date_confidence   budget_confidence           -- reported | estimated | unknown
 classification_method  text                    -- 'llm' | 'rule' | 'sec_filing' | 'human'
 evidence_id            uuid fk -> evidence(id) not null   -- REQUIRED
 created_at, updated_at
 ```
+
+> `deal_date` is the **date of the financing event** (announcement, filing, or
+> award), distinct from `films.year` (the film's release/production year). It is what
+> makes **genre-specific recency** queryable — e.g. "entities that financed a
+> `genre_horror` film in the last 3 years." When only the film year is known,
+> `deal_date` is set from it with `deal_date_confidence='estimated'`; when nothing is
+> datable, it stays NULL/`unknown` (never fabricated). Recency ranking uses
+> `deal_date` where present and falls back to `films.year` only as an estimate.
 
 > This table is where the **Step 2 "producer credit ≠ money"** problem lives. A row
 > with `role = producer` and `is_financial = false, financier_confidence = 0.2` is a

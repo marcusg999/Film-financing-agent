@@ -109,13 +109,44 @@ weighted up** per your focus — but a genre-agnostic financier isn't excluded.
    qualified ones and labeled.
 2. **Budget-band match** — closeness of the entity's observed bands to the project's.
 3. **Genre-affinity match** — with genre/horror weighting.
-4. **Warm signal** — recency and relevance of the last qualifying deal (a fund active
-   this year outranks one last seen in 2015).
+4. **Warm signal** — recency and relevance of the last qualifying deal, measured by
+   `financing_relationships.deal_date` (a fund active this year outranks one last seen
+   in 2015). **Genre-specific recency** is first-class: for a horror project, the
+   signal that matters most is *"financed a `genre_horror` film recently,"* not
+   *"financed anything recently."* The ranker computes recency **within the project's
+   genre band** — an entity whose last horror deal was 2024 outranks one whose last
+   horror deal was 2016 even if it financed a drama last month.
 5. **Contactability** — a verified contact present outranks none (an entity you can't
    reach is a weak lead regardless of fit).
 
 Every score row stores an `explanation` so the dashboard can show *why* an entity is
 ranked where it is — no black-box ordering.
+
+## Named output: "recent financiers of genre X"
+
+This is a first-class query and export, because it's one of the most useful views for
+a filmmaker: **who put actual money into films of my genre, recently?**
+
+Definition (all conditions):
+- `financing_relationships.is_financial = true AND financier_confidence ≥ τ_fin`
+  (money, not craft),
+- linked `films.genre_bands` contains the target band (e.g. `genre_horror`),
+- `deal_date` within the chosen window (default: last 3 years; user-adjustable),
+- geography ∈ the project's markets.
+
+The result is the set of entities meeting the above, ranked by genre-specific warm
+signal + budget-band fit + contactability, each row carrying the films/deals that put
+it on the list and their evidence. Entities that pass the genre/recency filter but
+fail the sub-$10M **cluster rule** are shown **labeled** (`mixed_scale` /
+`insufficient_data`), not silently mixed in with confirmed sub-$10M financiers.
+
+Honest caveats that ship with this view:
+- **Recency is only as good as `deal_date` coverage.** Where we could only date a
+  deal to the film's year, the row is marked estimated; undatable deals are excluded
+  from the window rather than assumed recent.
+- **It lists the *visible* financiers of the genre** — the private individual / SPV
+  that quietly funded a horror film with no filing or announcement won't appear (see
+  [05](05-verification-and-honest-math.md), coverage reality).
 
 ## Worked example (illustrative)
 

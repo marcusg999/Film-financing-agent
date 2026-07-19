@@ -78,3 +78,11 @@ Treat this as living — add to it as we build.
     travels with every export.
 22. **"Active" ≠ "still investing."** A fund with a 2019 mandate page may be dormant.
     Warm-signal recency guards against presenting stale players as live money.
+23. **Deal date ≠ film year.** "Financed genre X recently" must key off the *financing
+    event* date (`financing_relationships.deal_date`), not the film's release year — a
+    2024 release may have been financed in 2021, and a re-financing/output deal may
+    post-date release. Where only the film year is known, mark the deal date
+    `estimated`; never treat an undatable deal as recent to pad a genre view.
+24. **Genre-recency ≠ generic recency.** An entity active last month on a drama is not
+    a warm horror lead. Compute recency *within the project's genre band*, or a
+    genre-agnostic "recently active" fund will crowd out the true genre financiers.
