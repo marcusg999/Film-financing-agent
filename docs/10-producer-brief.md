@@ -27,6 +27,7 @@ turns "made" into "financed."
 | Window | Financing active in the last 10 years (deal-dated) |
 | Budget band | **≤ $10M indie band first**; all-budgets is a funded add-on, not a rebuild |
 | Entity types | Companies & funds, **sales agents / MG distributors**, tax-credit / soft-money bodies, and individual financiers where public |
+| Contacts | **Email + phone** where the entity publishes them; verified per channel (email validation / phone line-type lookup) before marked usable |
 | "Financed, not filmed" | Only entities evidenced as putting up money; craft credits excluded |
 
 > Genre note: horror/sci-fi money is disproportionately **sales-agent / MG-driven**,

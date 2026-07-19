@@ -82,9 +82,11 @@ ship first. The long tail of small regional funds is deferred, not front-loaded.
 
 ## Phase 4 — Contacts + verification + assisted drafting
 
-- Pull contact channels from entities' **own public sites / filings** only.
-- **Email verification** (the one paid line item); enforce verified-only in exports;
-  90-day re-check.
+- Pull contact channels — **email and phone where available** — from entities'
+  **own public sites / filings** only.
+- **Contact verification**: email validation API + phone line-type lookup;
+  enforce verified-only in exports; 90-day re-check. Phones normalized to E.164
+  (libphonenumber) on ingest.
 - **Assisted drafting** view: Claude drafts a personalized outreach message per
   entity/project; human copies/sends **from their own inbox** (no bulk send).
 - GDPR handling: `is_personal_data`, `gdpr_basis='legitimate_interest'`, suppression

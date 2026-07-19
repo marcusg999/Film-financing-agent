@@ -125,9 +125,18 @@ suppressed           boolean not null default false  -- opt-out / do-not-contact
 created_at, updated_at
 ```
 
-> An email is only surfaced as *usable* for assisted drafting when
+> A contact is only surfaced as *usable* for assisted drafting when
 > `verification_status = 'verified'` and `suppressed = false`. Pattern-guessed
-> addresses are **never** written as verified (see [05](05-verification-and-honest-math.md)).
+> values are **never** written as verified (see [05](05-verification-and-honest-math.md)).
+>
+> **Phone numbers are first-class contacts** (channel `phone`), collected wherever
+> an entity publishes one, with the same provenance/suppression rules as email.
+> Conventions: `value` stores the E.164-normalized number (raw form stays in the
+> evidence excerpt); `(entity_id, channel, value)` is unique (migration 0004).
+> Verification is **per-channel**: email = validation API (syntax/MX/SMTP-probe);
+> phone = line-type lookup (Twilio-Lookup-style: number active, line type known)
+> or explicit human confirmation. A phone that only parsed as E.164 stays
+> `unverified` — format validity is not reachability.
 
 ### `evidence` — provenance for every claim
 

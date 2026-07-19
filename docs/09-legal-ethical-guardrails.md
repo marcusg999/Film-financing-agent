@@ -51,6 +51,23 @@ gives the compliant alternative.
 - **Individuals over businesses:** a `production_company` inbox is lower-risk than a
   named person's address. The design biases toward the former.
 
+## 3b. Phone numbers — extra rules beyond email
+
+Phone contacts are collected where an entity publishes them, under the same
+minimization/provenance/suppression machinery — plus channel-specific law:
+
+- **Calls are human-dialed only.** Assisted outreach means Marcus or the producer
+  dials; the system never auto-dials, robocalls, or sends SMS. (US **TCPA**
+  restricts autodialers/prerecorded calls/texts; designing them out keeps us clear.)
+- **UK/EU screening:** before cold-calling UK numbers, screen against **TPS/CTPS**
+  — corporate numbers registered there may not be cold-called even B2B. EU member
+  states have their own e-privacy rules; when in doubt, email first and call only
+  published business lines.
+- **Bias to business lines.** A published office/switchboard number is low-risk; a
+  personal mobile is personal data under GDPR — collect it only when the entity
+  itself published it in a professional context, flag `is_personal_data`, and
+  suppress on request across all channels at once.
+
 ## 4. CAN-SPAM (US) — and why v1 mostly sidesteps it
 
 - Your outreach decision is **discovery + assisted drafting, human sends from their

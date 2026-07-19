@@ -191,3 +191,34 @@ test("rule 3: usable_contacts excludes unverified and suppressed contacts", asyn
   );
   assert.deepEqual(rows.map((r) => r.value), ["ok@fund.example"]);
 });
+
+test("phones are first-class contacts under the same rules, deduped per entity+channel+value", async () => {
+  const evidenceId = await insertEvidence();
+  const { rows: eRows } = await pool.query(
+    `INSERT INTO entities (type, display_name, normalized_name)
+     VALUES ('sales_agent', 'Phone Fund', 'phone fund') RETURNING id`
+  );
+  const base = `INSERT INTO contacts (entity_id, channel, value, verification_status, source, evidence_id, is_personal_data)`;
+  // verified office line (E.164) surfaces; format-valid-but-unverified does not
+  await pool.query(
+    `${base} VALUES ($1, 'phone', '+14155550100', 'verified', 'entity_own_site', $2, false)`,
+    [eRows[0].id, evidenceId]
+  );
+  await pool.query(
+    `${base} VALUES ($1, 'phone', '+442071838750', 'unverified', 'entity_own_site', $2, false)`,
+    [eRows[0].id, evidenceId]
+  );
+  const { rows } = await pool.query(
+    `SELECT value FROM usable_contacts WHERE entity_id = $1 AND channel = 'phone'`,
+    [eRows[0].id]
+  );
+  assert.deepEqual(rows.map((r) => r.value), ["+14155550100"]);
+  // duplicate (entity, channel, value) is rejected
+  await assert.rejects(
+    pool.query(
+      `${base} VALUES ($1, 'phone', '+14155550100', 'unverified', 'entity_own_site', $2, false)`,
+      [eRows[0].id, evidenceId]
+    ),
+    /contacts_entity_channel_value_key/
+  );
+});

@@ -16,12 +16,16 @@ the build if any qualifying claim lacks evidence.
 
 ## Rule 2 — Contact info must be verified before it's marked usable
 
-- Emails are **verified**, never pattern-guessed. We do **not** synthesize
-  `firstname@company.com`.
-- Verification in v1: **syntax + MX + SMTP-probe / disposable + role-address check**
-  via an email-validation API (the one paid line item allowed by your budget).
-  Results map to `verification_status`: `verified | invalid | risky | catch_all |
-  unknown`.
+- Contacts are **verified**, never pattern-guessed. We do **not** synthesize
+  `firstname@company.com`, and we do not invent or "complete" phone numbers.
+- **Emails**: **syntax + MX + SMTP-probe / disposable + role-address check** via an
+  email-validation API. Results map to `verification_status`: `verified | invalid |
+  risky | catch_all | unknown`.
+- **Phones** (collected wherever an entity publishes one): normalized to E.164 on
+  ingest; **verified** means a line-type lookup (Twilio-Lookup-style — number is
+  live and its line type is known, ~$0.005–0.01/lookup) or explicit human
+  confirmation. E.164 format validity alone leaves the contact `unverified` —
+  a well-formed number is not a reachable one.
 - Only `verified` (and non-`suppressed`) contacts appear in exports / draft view.
 - `catch_all` and `risky` are shown **labeled**, not as verified.
 - Contacts decay: a `verified_at` older than **90 days** is re-checked before reuse

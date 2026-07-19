@@ -27,7 +27,7 @@ team (your Step 7 choice).
 | **Claude API — classification/resolution (Opus)** | Fewer, harder calls; the money-vs-craft + merge calls | $200–$600 backfill | **$60–$180** |
 | **Supabase** | Postgres + pgvector + Auth + pg-boss queue; Pro tier | — | **$25–$60** |
 | **Railway** | 1 web (dashboard) + 1 worker service | — | **$20–$50** |
-| **Email verification API** | ~$0.003–$0.008 / check; re-check every 90 days | — | **$15–$60** (scales with contact count) |
+| **Contact verification (email + phone)** | Email ~$0.003–$0.008/check; phone line-type lookup ~$0.005–$0.01/lookup; re-check every 90 days | — | **$15–$75** (scales with contact count) |
 | **Domain / misc / logging** | — | — | **$5–$20** |
 
 ### Rough totals
