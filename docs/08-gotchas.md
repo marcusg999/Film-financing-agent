@@ -86,3 +86,13 @@ Treat this as living — add to it as we build.
 24. **Genre-recency ≠ generic recency.** An entity active last month on a drama is not
     a warm horror lead. Compute recency *within the project's genre band*, or a
     genre-agnostic "recently active" fund will crowd out the true genre financiers.
+25. **Fixture-verified ≠ live-verified.** The SEC EDGAR client's response shapes
+    (full-text search JSON, Form C XML nesting) are asserted against fixtures because
+    this build environment has no data-host egress. The first networked run must
+    re-verify both shapes — EDGAR's Form C XML nesting varies by schema year, and the
+    parser traverses defensively but can still miss fields silently. Same applies to
+    the SPARQL result shape, though Wikidata's is more stable.
+26. **A Form C names the raise, not the film.** The issuer is hard evidence of a
+    regulated raise; which *film* it funded lives in narrative attachments. Never
+    create film/financing rows from a Form C until the classifier grounds the
+    linkage — issuer + portal entities only.

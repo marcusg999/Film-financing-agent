@@ -9,10 +9,12 @@
   "scripts": {
     "start": "tsx src/worker.ts",
     "ingest:wikidata": "tsx src/cli/ingest-wikidata.ts",
-    "test": "node --import tsx --test test/*.test.ts"
+    "test": "node --import tsx --test test/*.test.ts",
+    "ingest:sec": "tsx src/cli/ingest-sec.ts"
   },
   "dependencies": {
     "@filmfund/db": "*",
+    "fast-xml-parser": "^4.5.0",
     "pg-boss": "^10.1.5"
   },
   "devDependencies": {

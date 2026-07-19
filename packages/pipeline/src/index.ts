@@ -5,3 +5,5 @@ export type { IngestJob, ExtractJob, ResolveJob, EnrichJob, ScoreJob, QueueName 
 export * as stages from "./stages.js";
 export { runIngestWikidata } from "./ingest/wikidataIngest.js";
 export type { IngestStats } from "./ingest/wikidataIngest.js";
+export { runIngestSecEdgar } from "./ingest/secEdgarIngest.js";
+export type { SecIngestStats } from "./ingest/secEdgarIngest.js";
