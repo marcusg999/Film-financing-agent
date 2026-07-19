@@ -49,6 +49,37 @@ Nothing here is built until you approve the plan.
 - **Exit criteria:** the full funding-type enum is represented; genre-forward ranking
   works; UK/EU/Canada soft money is mapped.
 
+### Phase 3 execution risks & mitigations
+
+The hard part of Phase 3 is **breadth and brittleness, not algorithmic difficulty.**
+Each source is the same shape (fetch → LLM-extract → resolve → score), and because
+extraction runs through Claude we **do not hand-write a parser per fund site** — a new
+source is mostly config (URL + ToS verdict + extraction-prompt variant). Expect Phase
+3 to be the *slowest* phase and the one that never fully "closes," but not the one
+that gets *stuck*. Specific risks:
+
+| Risk | Why it bites | Mitigation (built into the design) |
+|------|--------------|-----------------------------------|
+| **Heterogeneity × volume** — dozens of funds/commissions, each idiosyncratic | Long tail of small adapters; tedium + upkeep, not complexity | Per-source-*type* adapter pattern (not per-site parsers); new sources are config, not code. |
+| **Multi-language (EU)** — mandates/eligibility in FR/DE/ES/etc. | Tagging + dedup must be language-robust, not English-only | Claude extraction is multilingual; add language-robust normalization to entity resolution; validate on non-English sources before trusting tags. |
+| **PDFs & documents** — guidelines/awardee lists often published as PDF | PDF layout extraction is reliably messier than HTML | Dedicated document-extraction path (the `pdf` capability); treat PDF-derived fields as needing an extra confidence check. |
+| **Fuzzy mandate → structured tags** — "we back bold auteur voices" ≠ a budget band | Phase 3 output is inherently softer than Phase 1 hard evidence | Genre/budget-band tags from mandates are stored as **low-confidence** (schema already supports it); ranked below filing-grade evidence, never presented as hard fact. |
+| **Brittleness / maintenance** — sites redesign | Adapters rot; breadth = ongoing upkeep | Content-hash change detection flags when a source's structure shifts; adapters fail loudly into a review queue rather than silently mis-extracting. |
+| **ToS gating shrinks coverage** — some 🟡 sources return prohibited | Breadth is capped by what's actually permitted; expect gaps | ToS verdict is a hard gate ([02](02-data-source-matrix.md)); dropped sources are logged so coverage gaps are visible, not silent. |
+| **Entity-resolution load grows** — more sources = more name variants/SPVs | Dedup quality can degrade as breadth increases | Resolution review queue + `merge_decisions` audit ([03](03-data-schema.md)) scales with volume; re-run eval as breadth grows. |
+
+**Judgment calls that need a human, not more code** (flagged so they're not assumed
+away): which funds/commissions to include for a genre-forward focus (curation),
+live ToS go/no-go on borderline sources, and validating that a mandate actually maps
+to the band/genre it was tagged with. These are exactly the tasks where cheap
+delegated labor underdelivers — the *coding* of Phase 3 is delegable, the *judgment*
+is not.
+
+**Sequencing to de-risk:** Pareto-first — the ~30–40 major institutional bodies (BFI,
+BBC Film, Telefilm, Eurimages, Creative Europe MEDIA, the largest national/regional
+funds and film commissions) cover the large majority of institutional soft money and
+ship first. The long tail of small regional funds is deferred, not front-loaded.
+
 ## Phase 4 — Contacts + verification + assisted drafting
 
 - Pull contact channels from entities' **own public sites / filings** only.
