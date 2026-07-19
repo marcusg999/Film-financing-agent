@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "description": "Discovers, qualifies, and ranks funding sources for independent filmmakers (budgets ≤ $10M).",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "migrate": "npm run migrate -w @filmfund/db",

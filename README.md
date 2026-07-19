@@ -5,10 +5,29 @@ filmmakers with projects budgeted at $10M or less** — across equity, film fund
 production companies, sales agents / MG distributors, gap/bridge lenders, tax-credit
 & soft-money brokers, grants, and equity-crowdfunding, in the US / UK / EU / Canada.
 
-## Status: planning only
+## Status: Phase 0 complete (foundations)
 
-No production code yet. The complete plan lives in [`docs/`](docs/00-README.md) and
-is awaiting approval before anything is scaffolded.
+The plan lives in [`docs/`](docs/00-README.md). The build is underway per
+[docs/07-roadmap.md](docs/07-roadmap.md):
+
+- ✅ **Phase 0** — schema with integrity constraints (budget provenance, evidence-required
+  claims), ToS source gate (DB trigger + code), pg-boss queue skeleton, dashboard skeleton.
+  11 tests green against Postgres 16 + pgvector.
+- ⏳ **Phase 1** — SEC EDGAR + Wikidata ingestion (next).
+
+### Development
+
+```bash
+npm install
+# local Postgres with pgvector, then:
+export DATABASE_URL='postgres://root@localhost/filmfund_dev?host=%2Fvar%2Frun%2Fpostgresql'
+npm run migrate         # apply packages/db/migrations
+npm test                # 11 integrity tests (creates/drops its own test DBs)
+npm run build -w @filmfund/dashboard && npm run start -w @filmfund/dashboard
+```
+
+Layout: `packages/db` (migrations + client) · `packages/pipeline` (queues, ToS gate,
+stage skeletons) · `apps/dashboard` (Next.js, read-only skeleton).
 
 Start here → **[docs/00-README.md](docs/00-README.md)**
 
