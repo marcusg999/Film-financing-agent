@@ -144,6 +144,62 @@ running. Pricing below was checked against current (2026) plans (sources at bott
 - **Deferred and still $0 until you choose them:** contact-enrichment API
   ($100–500/mo) and licensed budget data ($1k+/mo). The MVP never requires them.
 
+## Comparison: built traditionally with engineers
+
+Same scope, same roadmap — but paying an engineering team instead of building it
+yourself here. The effort estimate (Phases 0–5 = **45–77 eng-days ≈ 360–616 hours**;
+first useful slice, Phases 0–2 = **21–35 eng-days ≈ 168–280 hours**) is the same; only
+the labor cost changes. Rates below are current (2026) market ranges for senior
+full-stack/data engineers (sources at bottom).
+
+### Labor cost to a working v1 (Phases 0–5)
+
+| Sourcing | Effective rate | Labor to v1 | First useful slice (0–2) |
+|----------|----------------|-------------|--------------------------|
+| **Offshore** (S. Asia / Africa) | ~$20–45/hr | **~$10k–28k** | ~$4k–13k |
+| **Nearshore / Eastern-EU** (mid–senior) | ~$50–85/hr | **~$20k–52k** | ~$9k–24k |
+| **US/Western senior freelancer** | ~$90–165/hr | **~$35k–100k** | ~$16k–46k |
+| **US/Western agency** (PM + QA blended) | ~$150–250/hr | **~$60k–155k** | ~$28k–70k |
+
+> **Loaded cost is higher than the raw rate.** For a *team* (not a single freelancer),
+> real loaded cost typically runs **1.4–1.8×** the quoted rate once management,
+> ramp-up, coordination, and QA are priced in — already baked into the agency row,
+> and something to add on top of the offshore/nearshore rows if you're coordinating
+> multiple people. Agencies also usually attach an ongoing **maintenance retainer**
+> (commonly ~$1–4k/mo) that the solo build doesn't incur.
+
+### The cloud/API run-rate is the same either way
+
+Whoever builds it, the infrastructure + Claude API spend is identical: **~$0 to set
+up, ~$75–200/mo to run, plus ~$100–400 one-time backfill.** That's a rounding error
+next to traditional labor — which is the entire point of the comparison.
+
+### Side-by-side
+
+| | **Build it here (you + Claude)** | **Traditional (engineers)** |
+|---|---|---|
+| Engineering labor to v1 | **$0** (your time) | **~$10k–155k** depending on sourcing |
+| Setup cash | ~$0 (free tiers) | ~$0 (free tiers) |
+| Run-rate while building + after | ~$75–200/mo | ~$75–200/mo (same) |
+| One-time corpus backfill | ~$100–400 | ~$100–400 (same) |
+| Ongoing maintenance | your time | often a retainer (~$1–4k/mo, agency) |
+| Calendar time to v1 | ~6–10 wks focused / 9–15 part-time | ~8–14 wks (team parallelism offset by coordination) |
+| **All-in cash to first working v1** | **~$700–1,600** (mostly Claude tokens) | **~$11k–157k** (labor dominates) |
+
+### Honest caveats on the comparison
+
+- **Rates vary enormously** by geography, seniority, and stack — treat these as
+  planning-grade ranges, not quotes. Get real bids before budgeting.
+- **The hard part is Phase 2** (entity resolution + the money-vs-craft classifier +
+  eval tuning). Rock-bottom offshore labor often *underdelivers* precisely there — a
+  cheap day rate that produces a weak classifier is a false economy for this domain.
+- **The AI-leverage assumption cuts both ways:** the eng-day estimate assumes an
+  engineer working *with* Claude (as you would). A team not leaning on AI heavily may
+  run longer, pushing the traditional numbers up, not down.
+- **"$0 labor" isn't free** — it's your time. The honest framing is: building here
+  converts a **$10k–155k cash line into your own hours**, at the cost of you being the
+  single point of delivery.
+
 ### The honest caveat on build cost
 
 The dominant real cost is **engineering time on Phase 2** (entity resolution +
@@ -162,3 +218,12 @@ per-source extraction cost.
 - Claude API pricing — see the `claude-api` reference / https://www.anthropic.com/pricing (pay-as-you-go; Haiko/Opus split drives cost).
 
 > Re-check before committing spend — provider plans and limits change.
+
+## Labor-rate sources (checked during planning, 2026)
+
+- US senior full-stack contractor rates (~$80–165/hr for specialized project work) — https://www.fullstack.com/labs/resources/blog/software-development-price-guide-hourly-rate-comparison ; https://www.kore1.com/tech-contractor-hourly-rates-2026/
+- Offshore / nearshore rates by region (offshore ~$20–45/hr; Eastern-EU/LATAM senior ~$60–85/hr; 40–70% cheaper than onshore) — https://distantjob.com/blog/offshore-developer-rates/ ; https://www.aalpha.net/articles/offshore-software-development-hourly-rates/
+- Loaded-cost multiplier (1.4–1.8× quoted rate for teams) — https://distantjob.com/blog/offshore-developer-rates/
+
+> As with the infra pricing: re-check with real bids before committing. Labor rates
+> move and vary far more than cloud pricing.
