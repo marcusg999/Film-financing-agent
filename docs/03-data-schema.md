@@ -22,8 +22,8 @@ budget_confidence:  reported | estimated | unknown        -- provenance quality
 claim_confidence:   numeric 0.00–1.00                     -- model/rule confidence
 contact_channel:    email | web_form | phone | agent | postal | social
 verification_status: verified | unverified | invalid | risky | catch_all | unknown
-genre_band:         genre_horror | thriller | prestige_drama | comedy | doc |
-                    action | family | other
+genre_band:         genre_horror | thriller | sci_fi | prestige_drama | comedy |
+                    doc | action | family | other
 budget_band:        under_1m | 1m_3m | 3m_5m | 5m_10m | over_10m | unknown
 ```
 

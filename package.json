@@ -1,0 +1,17 @@
+{
+  "name": "film-financing-agent",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Discovers, qualifies, and ranks funding sources for independent filmmakers (budgets ≤ $10M).",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "migrate": "npm run migrate -w @filmfund/db",
+    "test": "npm run test -ws --if-present",
+    "worker": "npm run start -w @filmfund/pipeline"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
