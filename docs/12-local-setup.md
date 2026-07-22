@@ -33,14 +33,18 @@ docker run -d --name filmfund-db \
   -p 5432:5432 pgvector/pgvector:pg16
 ```
 
-Then your connection strings are:
+Then create a **`.env` file in the repo root** (the folder with `package.json`):
 
-```bash
-export DATABASE_URL='postgres://postgres:filmfund@localhost:5432/filmfund_dev'
-export ADMIN_DATABASE_URL='postgres://postgres:filmfund@localhost:5432/postgres'  # only for `npm test`
+```
+DATABASE_URL=postgres://postgres:filmfund@localhost:5432/filmfund_dev
+ADMIN_DATABASE_URL=postgres://postgres:filmfund@localhost:5432/postgres
 ```
 
-(Stop/restart later with `docker stop filmfund-db` / `docker start filmfund-db`.)
+That's it — the CLIs and the dashboard **auto-load this `.env`** (it's gitignored,
+so it's never committed). No `export` needed in each terminal. An explicit
+`export` still wins if you ever want to override it.
+
+(Stop/restart the DB later with `docker stop filmfund-db` / `docker start filmfund-db`.)
 
 ### Option B — native Postgres
 
