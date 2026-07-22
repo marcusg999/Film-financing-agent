@@ -8,7 +8,7 @@
   },
   "scripts": {
     "migrate": "tsx src/migrate.ts",
-    "test": "node --import tsx --test test/*.test.ts"
+    "test": "node --import tsx --import ./test/setup-env.ts --test test/*.test.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
