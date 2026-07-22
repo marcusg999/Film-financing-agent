@@ -11,7 +11,8 @@
     "ingest:wikidata": "tsx src/cli/ingest-wikidata.ts",
     "test": "node --import tsx --import ./test/setup-env.ts --test test/*.test.ts",
     "ingest:sec": "tsx src/cli/ingest-sec.ts",
-    "qualify": "tsx src/cli/qualify.ts"
+    "qualify": "tsx src/cli/qualify.ts",
+    "ingest:bodies": "tsx src/cli/ingest-curated.ts"
   },
   "dependencies": {
     "@filmfund/db": "*",

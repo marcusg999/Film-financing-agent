@@ -94,6 +94,17 @@ any drift shows up (gotcha #25). If you see a high `fetchErrors`, zero
 `rowsFetched`, or zero `issuersUpserted`, paste the JSON back to me and I'll fix
 the parser. A clean run looks like non-zero `filmsUpserted` / `issuersUpserted`.
 
+## 5a. Seed institutional funders (Phase 3 — offline, no keys)
+
+```bash
+npm run ingest:bodies -w @filmfund/pipeline
+```
+
+Adds ~36 curated public funding bodies (national film funds, soft money, grants,
+tax-credit offices, and known genre financiers across US/UK/EU/Canada), each
+evidence-linked to its official site. Runs fully offline. Browse them at
+**http://localhost:3000/bodies** (filter by genre and region).
+
 ## 5b. Qualify + rank (Phase 2)
 
 After a backfill, turn the raw corpus into a qualified, ranked list:
