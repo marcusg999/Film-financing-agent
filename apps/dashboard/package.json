@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "next": "^15.3.0",
     "pg": "^8.13.0",
     "react": "^19.0.0",
