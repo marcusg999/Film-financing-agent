@@ -1,8 +1,18 @@
-# 11 — Deployment Runbook (Supabase + Railway)
+# 11 — Deployment Runbook (Netlify + Supabase)
 
-Option B path: the live backfill and the product run on Railway against
-Supabase; this container only needs git + npm. Everything below is
-click-through steps for Marcus plus the exact values each service needs.
+Architecture — three pieces, cleanly separated:
+
+| Piece | Runs on | Why |
+|-------|---------|-----|
+| **Dashboard** (Next.js, read-only) | **Netlify** | Serverless/edge fits a read-mostly UI; the Basic-auth middleware runs as an edge function. |
+| **Database** | **Supabase** (Postgres + pgvector) | Shared store for everything. |
+| **Worker + ingestion / qualify CLIs** | **A process host or your laptop** — *not Netlify* | These are long-running Node processes and scheduled backfills; Netlify functions are short-lived and stateless, so they can't host pg-boss or a multi-minute crawl. |
+
+> The most economical setup for a small team: **dashboard on Netlify**,
+> **DB on Supabase**, and run the **backfill + `npm run qualify` from your Mac**
+> (or a cheap always-on box) on whatever cadence you want. You only need an
+> always-on worker once the queue-driven stages (Phase 3+) are doing continuous
+> refresh; until then it's a manual/cron command against Supabase.
 
 ## 1. Supabase (database)
 
@@ -14,51 +24,55 @@ click-through steps for Marcus plus the exact values each service needs.
    port 5432 works with pg + pg-boss). Keep the password out of chat; it
    goes straight into Railway env vars.
 
-> Migrations run automatically on deploy (worker pre-deploy command below),
-> or manually: `DATABASE_URL=… npm run migrate`.
+> Run migrations once against Supabase from your machine:
+> `DATABASE_URL='<supabase-pooler-uri>' npm run migrate`. Re-run after any new
+> migration lands — it's idempotent.
 
-## 2. Railway (two services, one repo)
+## 2. Netlify (dashboard)
 
-Create a Railway project → **Deploy from GitHub repo** → pick this repo,
-then add **two services** pointing at the same repo:
+Connect the repo (**Add new site → Import from GitHub**). Netlify reads
+`netlify.toml` at the repo root, so the build settings are already committed:
 
-### Service A — `worker` (pipeline)
-
-| Setting | Value |
+| Setting | Value (from `netlify.toml`) |
 |---|---|
-| Root directory | `/` (monorepo root) |
-| Build command | `npm ci` |
-| Pre-deploy command | `npm run migrate` |
-| Start command | `npm run worker` |
-| Env vars | `DATABASE_URL` (Supabase pooler URI) · later: `ANTHROPIC_API_KEY`, `FIRECRAWL_API_KEY`, `EMAIL_VERIFY_API_KEY` |
+| Build command | `npm run build -w @filmfund/dashboard` |
+| Publish directory | `apps/dashboard/.next` |
+| Runtime | `@netlify/plugin-nextjs` (auto) |
 
-### Service B — `dashboard`
+Set **environment variables** (Site configuration → Environment variables):
 
-| Setting | Value |
+| Var | Value |
 |---|---|
-| Root directory | `/` (monorepo root) |
-| Build command | `npm ci && npm run build -w @filmfund/dashboard` |
-| Start command | `npm run start -w @filmfund/dashboard` |
-| Env vars | `DATABASE_URL` (same URI) · `DASHBOARD_PASSWORD` (pick a strong one) · `NPM_CONFIG_PRODUCTION=false` (Next build needs dev deps) |
-| Networking | Generate domain (public URL) |
+| `DATABASE_URL` | Supabase **Transaction pooler** URI — serverless functions open many short connections, so the transaction pooler is the right one here (not the session pooler). |
+| `DASHBOARD_PASSWORD` | A strong password. Login is HTTP Basic, user `team`. |
 
-> The dashboard **fails closed**: in production with no `DASHBOARD_PASSWORD`
-> it serves 503 for everything. Login is HTTP Basic — user `team`, password
-> = the env var. Supabase Auth replaces this in Phase 5.
+> The dashboard **fails closed**: in production with no `DASHBOARD_PASSWORD` it
+> serves 503 for everything, so contact data never sits on an open URL. Supabase
+> Auth replaces this Basic gate in Phase 5.
+>
+> Deploy trigger: Netlify auto-deploys the branch you pick. Point it at **`main`**
+> for continuous deploys, or at a **git tag** if you'd rather ship only tagged
+> releases (main-after-merge is a working-but-incomplete product until Phases 3–4).
 
-## 3. First backfill (run on Railway, where egress exists)
+## 3. Worker + backfill (a process host or your laptop — not Netlify)
 
-From the Railway CLI (`railway link` to the worker service), or a one-off
-service run:
+The ingestion and qualify commands are ordinary Node processes. Run them from
+your Mac (see docs/12) or any always-on box, pointed at the Supabase DB:
 
 ```bash
-railway run npm run ingest:wikidata -w @filmfund/pipeline -- --limit 2000
-railway run npm run ingest:sec      -w @filmfund/pipeline -- --from 2016-01-01 --to 2026-07-19 --max 200
+export DATABASE_URL='<supabase-pooler-uri>'   # session pooler is fine for CLIs
+npm run ingest:wikidata -w @filmfund/pipeline -- --limit 2000
+npm run ingest:sec      -w @filmfund/pipeline -- --from 2016-01-01 --to 2026-07-20 --max 200
+npm run qualify         -w @filmfund/pipeline
 ```
 
-Expected: the Wikidata run fills films/prodcos (horror + sci-fi, US/UK/EU/CA,
-2016+); the SEC run fills issuer + portal entities. Then open the dashboard —
-the genre chips should return real financiers.
+Expected: Wikidata fills films/prodcos (horror + sci-fi, US/UK/EU/CA, 2016+);
+SEC fills issuer + portal entities; `qualify` buckets and ranks them. Then open
+the Netlify dashboard — the genre chips return real, qualified financiers.
+
+> When continuous refresh is wanted (Phase 3+), host the worker (`npm run worker`)
+> on a small always-on process host — Render, Fly.io, a Railway worker, or a VM.
+> Netlify Scheduled Functions can trigger short jobs but not the long crawl/worker.
 
 **First-run checks (gotcha #25):** the EDGAR full-text-search JSON and Form C
 XML shapes were verified against fixtures, not live responses. On the first
@@ -80,7 +94,9 @@ Not needed until after the first backfill looks right.
 
 ## What Marcus hands back to continue the build
 
-1. Confirmation the backfill ran + the stats JSON it printed (or any error).
-2. `ANTHROPIC_API_KEY` set on the worker service (enables Phase 2
-   classifier work — never paste the key into chat).
+1. Confirmation the backfill + `npm run qualify` ran, and the stats JSON they
+   printed (or any error).
+2. `ANTHROPIC_API_KEY` in the environment where you run `qualify` (activates the
+   LLM money-vs-craft classifier — never paste the key into chat). Phase 2 also
+   runs without it, using the rule classifier.
 3. Nothing else — Firecrawl/email-verification keys wait for Phases 3–4.
