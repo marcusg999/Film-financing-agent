@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production Readiness Checklist — Film Funding Agent</title>
+<style>
+  html,body{margin:0;padding:0}
+  html,body,*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:13mm 12mm}
+  section,.callout,.legend{break-inside:avoid}
+  ul.ck li{break-inside:avoid}
+</style>
+</head>
+<body>
+<style>
+  :root{
+    --ground:#F4F5F7; --panel:#FFFFFF; --panel-2:#FBFBFC;
+    --ink:#14171E; --muted:#59626F; --faint:#8A93A2;
+    --line:rgba(20,23,30,.12); --line-2:rgba(20,23,30,.07);
+    --amber:#B26B1E; --amber-bright:#C9812A; --amber-soft:rgba(178,107,30,.10);
+    --good:#2F7D4F; --good-soft:rgba(47,125,79,.12);
+    --gate:#B23A2E; --gate-soft:rgba(178,58,46,.10);
+    --claude:#2C6E8C; --claude-soft:rgba(44,110,140,.10);
+  }
+  *{box-sizing:border-box}
+  .pk{
+    --sans:"Helvetica Neue",Arial,system-ui,sans-serif;
+    --serif:Georgia,"Times New Roman",serif;
+    background:var(--ground); color:var(--ink); font-family:var(--serif);
+    line-height:1.55; -webkit-font-smoothing:antialiased; padding:0 22px 60px;
+  }
+  .wrap{max-width:840px; margin:0 auto}
+
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); display:flex; align-items:center; gap:12px}
+  .eyebrow::after{content:""; height:1px; flex:1; background:var(--line)}
+  h1{font-family:var(--sans); font-weight:800; letter-spacing:-.02em; line-height:1.02; font-size:clamp(30px,5.5vw,46px); margin:18px 0 0; text-transform:uppercase}
+  .lede{font-size:16px; color:var(--muted); margin:14px 0 0; max-width:64ch}
+
+  .legend{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 6px; font-family:var(--sans)}
+  .pill{font-size:11px; font-weight:700; letter-spacing:.04em; padding:4px 10px; border-radius:999px; white-space:nowrap}
+  .p-done{background:var(--good-soft); color:var(--good)}
+  .p-you{background:var(--amber-soft); color:var(--amber-bright)}
+  .p-claude{background:var(--claude-soft); color:var(--claude)}
+  .p-gate{background:var(--gate-soft); color:var(--gate)}
+
+  .callout{border:1px solid color-mix(in srgb,var(--amber) 40%,var(--line)); background:var(--amber-soft); border-radius:11px; padding:18px 20px; margin:26px 0 8px}
+  .callout h3{font-family:var(--sans); font-size:14px; margin:0 0 8px; letter-spacing:.01em}
+  .callout p{margin:6px 0 0; font-size:14px; color:var(--ink)}
+  .callout .tier{display:flex; gap:10px; margin-top:10px; font-size:13.5px}
+  .callout .tier b{font-family:var(--sans); color:var(--amber-bright); min-width:74px; flex:none}
+
+  section{margin-top:32px; break-inside:avoid}
+  h2{font-family:var(--sans); font-weight:800; font-size:16px; letter-spacing:-.01em; margin:0 0 4px; display:flex; align-items:baseline; gap:12px}
+  h2 .n{color:var(--amber); font-size:13px; font-variant-numeric:tabular-nums}
+  .sec-note{font-size:13px; color:var(--faint); margin:0 0 14px; font-style:italic}
+
+  ul.ck{list-style:none; margin:0; padding:0; display:grid; gap:2px}
+  ul.ck li{display:grid; grid-template-columns:22px 1fr auto; gap:12px; align-items:start; padding:12px 4px; border-bottom:1px solid var(--line-2)}
+  ul.ck li:last-child{border-bottom:0}
+  .box{width:16px; height:16px; margin-top:2px; border:1.5px solid var(--faint); border-radius:4px}
+  .box.done{border-color:var(--good); background:var(--good); position:relative}
+  .box.done::after{content:"✓"; position:absolute; inset:0; color:#fff; font-family:var(--sans); font-size:11px; font-weight:800; display:grid; place-items:center; line-height:1}
+  .it{font-size:14.5px}
+  .it .d{display:block; color:var(--muted); font-size:12.5px; margin-top:2px}
+  .tag{font-family:var(--sans); font-size:10.5px; font-weight:700; letter-spacing:.03em; padding:3px 9px; border-radius:999px; white-space:nowrap; align-self:start; margin-top:1px}
+  .t-done{background:var(--good-soft); color:var(--good)}
+  .t-you{background:var(--amber-soft); color:var(--amber-bright)}
+  .t-claude{background:var(--claude-soft); color:var(--claude)}
+  .t-gate{background:var(--gate-soft); color:var(--gate)}
+
+  footer{margin-top:40px; padding-top:20px; border-top:1px solid var(--line); font-family:var(--sans); font-size:12px; color:var(--faint)}
+  footer .by{display:flex; flex-wrap:wrap; gap:6px 18px}
+  footer .by b{color:var(--ink)}
+  footer .disc{margin-top:12px; font-family:var(--serif); font-style:italic; line-height:1.5; max-width:80ch}
+</style>
+
+<div class="pk">
+  <div class="wrap">
+
+    <div class="eyebrow">Production readiness · Film Funding Agent</div>
+    <h1>The road to a<br>live production test</h1>
+    <p class="lede">Everything between the current build and running the agent against real data — grouped by dependency, honest about what's built and what isn't. Discovery can be tested soon; outreach is gated behind compliance.</p>
+
+    <div class="legend">
+      <span class="pill p-done">✓ Done — already built &amp; tested</span>
+      <span class="pill p-you">You — Marcus (infra / keys / decisions)</span>
+      <span class="pill p-claude">Claude — remaining build work</span>
+      <span class="pill p-gate">Gate — blocks the next stage</span>
+    </div>
+
+    <div class="callout">
+      <h3>What "production testing" means here — two levels</h3>
+      <p>Be clear which test you're preparing for; they have very different readiness bars.</p>
+      <div class="tier"><b>Discovery</b><span>Deploy + backfill, then browse a real, evidenced corpus of horror/sci-fi financiers in the dashboard. Reachable after Sections 1–3.</span></div>
+      <div class="tier"><b>The product</b><span>A <em>qualified, deduplicated, ranked, contactable</em> list — the actual deliverable. Needs Sections 4–5 (the Claude classifier + contacts).</span></div>
+      <div class="tier"><b>Outreach</b><span>Actually emailing/calling anyone. <strong>Hard-gated</strong> on Section 6 compliance — do not test outreach before it passes.</span></div>
+    </div>
+
+    <section>
+      <h2><span class="n">00</span> Where the build is now</h2>
+      <p class="sec-note">Committed on the branch, PR #1, 20 tests green in CI.</p>
+      <ul class="ck">
+        <li><span class="box done"></span><span class="it">Schema with integrity constraints — budgets require provenance, claims require evidence, contacts verified-or-hidden<span class="d">Enforced by the database, not convention</span></span><span class="tag t-done">Done</span></li>
+        <li><span class="box done"></span><span class="it">ToS source gate — IMDb / IMDbPro / LinkedIn / Box Office Mojo physically uninsertable<span class="d">DB trigger + application check, seeded from the docs/02 verdicts</span></span><span class="tag t-done">Done</span></li>
+        <li><span class="box done"></span><span class="it">Wikidata + SEC EDGAR Form C ingestion — idempotent, evidence on every claim<span class="d">Fixture-tested; live response shapes still to be confirmed (see 3)</span></span><span class="tag t-done">Done</span></li>
+        <li><span class="box done"></span><span class="it">Dashboard skeleton with fail-closed auth gate + genre query<span class="d">Serves 503 in production if no password is set</span></span><span class="tag t-done">Done</span></li>
+        <li><span class="box done"></span><span class="it">CI (GitHub Actions) running the full suite on every push<span class="d">Against a real pgvector Postgres container</span></span><span class="tag t-done">Done</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">01</span> Infrastructure &amp; deploy</h2>
+      <p class="sec-note">~20 minutes of clicking. Full steps in docs/11-deployment.md.</p>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">Supabase project created; <b>vector</b> extension enabled<span class="d">Pro tier before real data — free tier pauses after a week idle, no backups</span></span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Session-pooler connection string captured (kept out of chat)</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Railway <b>worker</b> service — pre-deploy <code>npm run migrate</code>, start <code>npm run worker</code></span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Railway <b>dashboard</b> service — build + start commands, public domain generated</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Env vars set — <code>DATABASE_URL</code>, strong <code>DASHBOARD_PASSWORD</code>, <code>NPM_CONFIG_PRODUCTION=false</code></span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Migrations applied in prod (auto on worker deploy) &amp; dashboard reachable, auth gate confirmed</span><span class="tag t-you">You</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">02</span> First data backfill</h2>
+      <p class="sec-note">Runs on Railway, where network egress exists (this build container has none).</p>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">Run Wikidata ingest — fills horror/sci-fi films + production companies (US/UK/EU/CA, 2016+)</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Run SEC EDGAR ingest — fills issuer + funding-portal entities</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Capture the stats JSON each run prints; hand it back<span class="d">Live EDGAR/SPARQL shapes were fixture-verified — first real run is where drift shows</span></span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">Fix any response-shape drift the stats reveal (high fetchErrors / zero rows)</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Confirm the dashboard shows real financiers under the genre chips</span><span class="tag t-you">You</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">03</span> Core intelligence — qualification (Phase 2)</h2>
+      <p class="sec-note">The difference between "a raw list" and "the product." Blocked on one key.</p>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it"><code>ANTHROPIC_API_KEY</code> set on the worker service (never pasted in chat)</span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">Money-vs-craft classifier — separates financiers from creative credits, with confidence</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Entity resolution — dedupe funds / SPVs across name variants and shell LLCs</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Cluster rule + bucketing — <code>qualified_sub10m</code> vs mixed-scale / insufficient-data</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Labeled eval set (50–100 entities) + precision floor for the qualified bucket<span class="d">Precision prioritized over recall — a wrong "qualified" is worse than a miss</span></span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Ranking — genre affinity + warm signal (deal recency) + contactability</span><span class="tag t-claude">Claude</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">04</span> Breadth &amp; contacts (Phases 3–4)</h2>
+      <p class="sec-note">Needed for a contactable list. Email + phone, verified per channel.</p>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">Breadth sources — fund/prodco own sites, soft-money bodies, sales agents / MG distributors</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Contact extraction — email <em>and phone</em> from entities' own public channels only</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Verification — email-validation API + phone line-type lookup (keys needed)</span><span class="tag t-you">You + Claude</span></li>
+        <li><span class="box"></span><span class="it">Suppression / do-not-contact list operational across all channels</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Assisted-draft view — personalized message, human sends from their own inbox</span><span class="tag t-claude">Claude</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">05</span> Legal &amp; compliance — outreach gate</h2>
+      <p class="sec-note">Discovery testing needs none of this. Testing any outreach needs all of it.</p>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">GDPR legitimate-interest basis recorded per stored contact (UK/EU in scope)</span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">Opt-out / erasure honored across channels; suppression enforced before any surfacing</span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">Phone rules — human-dial only (no autodialer/SMS), UK TPS/CTPS screening, business-line bias</span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">CAN-SPAM elements in the draft template — identification, physical address, opt-out</span><span class="tag t-gate">Gate</span></li>
+        <li><span class="box"></span><span class="it">Coverage caveat travels into every export ("discoverable, not complete")</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Re-check ToS of any needs-license source before flipping it on</span><span class="tag t-you">You + Claude</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">06</span> Security &amp; operations</h2>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">Replace any test <code>DASHBOARD_PASSWORD</code> with a strong secret; rotate if ever shared</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Supabase backups on (Pro tier); secrets only in Railway env, never in repo/chat</span><span class="tag t-you">You</span></li>
+        <li><span class="box"></span><span class="it">Error logging + queue-health visibility; rate-limit politeness confirmed on live sources</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Cost guardrails — Haiku/Opus routing, prompt caching, a spend alert on the Claude key</span><span class="tag t-you">You + Claude</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">07</span> Sign-off before calling it "ready to test"</h2>
+      <ul class="ck">
+        <li><span class="box"></span><span class="it">CI green on the PR; production build passes</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">End-to-end: ingest → classify → resolve → qualify → a ranked, evidenced list in the dashboard</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Spot-check 5–10 entities against their evidence links — every claim traces to a source</span><span class="tag t-you">You + Claude</span></li>
+        <li><span class="box"></span><span class="it">False-positive control verified — a real sub-$10M horror financier ranks; a mega-budget one-off is demoted</span><span class="tag t-claude">Claude</span></li>
+        <li><span class="box"></span><span class="it">Define what the test measures — list precision, contactability rate, and a pass bar</span><span class="tag t-you">You</span></li>
+      </ul>
+    </section>
+
+    <footer>
+      <div class="by"><b>Film Funding Agent — Production Readiness Checklist</b><span>Prepared by Marcus Gray</span><span>20 July 2026</span></div>
+      <p class="disc">Reflects the build at the time of writing (Phase 0 + Phase 1 ingestion complete, 20 tests green). "Done" items are committed and tested; everything else is outstanding. Cost and vendor figures elsewhere are planning-grade pending real quotes. The agent surfaces publicly discoverable financiers — never a guarantee of completeness.</p>
+    </footer>
+
+  </div>
+</div>
+</body></html>

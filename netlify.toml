@@ -1,0 +1,18 @@
+# Netlify hosts the dashboard (Next.js). The pipeline worker and the
+# ingestion / qualify CLIs are long-running Node processes and do NOT run on
+# Netlify — they run against the shared Supabase database from a process host
+# or locally (see docs/11-deployment.md).
+
+[build]
+  # Monorepo: install at the repo root, build the dashboard workspace.
+  command = "npm run build -w @filmfund/dashboard"
+  publish = "apps/dashboard/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Official Next.js runtime — turns .next into serverless/edge functions,
+# including the Basic-auth middleware (which fails closed without
+# DASHBOARD_PASSWORD).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

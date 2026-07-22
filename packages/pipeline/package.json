@@ -1,0 +1,26 @@
+{
+  "name": "@filmfund/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "tsx src/worker.ts",
+    "ingest:wikidata": "tsx src/cli/ingest-wikidata.ts",
+    "test": "node --import tsx --test test/*.test.ts",
+    "ingest:sec": "tsx src/cli/ingest-sec.ts",
+    "qualify": "tsx src/cli/qualify.ts"
+  },
+  "dependencies": {
+    "@filmfund/db": "*",
+    "fast-xml-parser": "^4.5.0",
+    "pg-boss": "^10.1.5",
+    "tsx": "^4.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
