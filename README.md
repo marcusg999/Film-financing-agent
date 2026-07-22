@@ -17,8 +17,11 @@ The plan lives in [`docs/`](docs/00-README.md). The build is underway per
   evidence on every claim, fixture-tested (20 tests green). Live backfill runs on
   Railway per [docs/11-deployment.md](docs/11-deployment.md) — this container has
   no data-host egress.
-- ⏳ **Phase 2** — entity resolution + cluster-rule qualification (needs
-  `ANTHROPIC_API_KEY` for the money-vs-craft classifier).
+- ✅ **Phase 2** — entity resolution (blocking + strong-key merge + review queue),
+  money-vs-craft classifier (rule default + Claude adapter behind `ANTHROPIC_API_KEY`),
+  cluster-rule qualification, and ranking. `npm run qualify` runs the chain; the
+  dashboard shows honest bucket labels. 42 tests green.
+- ⏳ **Phase 3** — breadth sources (fund/prodco sites, soft money, sales agents).
 
 ### Development
 

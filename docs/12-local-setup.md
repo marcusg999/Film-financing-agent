@@ -90,6 +90,20 @@ any drift shows up (gotcha #25). If you see a high `fetchErrors`, zero
 `rowsFetched`, or zero `issuersUpserted`, paste the JSON back to me and I'll fix
 the parser. A clean run looks like non-zero `filmsUpserted` / `issuersUpserted`.
 
+## 5b. Qualify + rank (Phase 2)
+
+After a backfill, turn the raw corpus into a qualified, ranked list:
+
+```bash
+npm run qualify -w @filmfund/pipeline
+# → resolve (dedupe) → classify (money vs craft) → qualify (cluster rule) → score (rank)
+```
+
+This runs with **no API key** (deterministic rule classifier). Set
+`ANTHROPIC_API_KEY` first to activate the LLM money-vs-craft classifier
+instead — same command, better classification. Re-run it any time after new
+data lands; it's idempotent.
+
 ## 6. Open the dashboard
 
 ```bash

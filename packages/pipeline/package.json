@@ -10,7 +10,8 @@
     "start": "tsx src/worker.ts",
     "ingest:wikidata": "tsx src/cli/ingest-wikidata.ts",
     "test": "node --import tsx --test test/*.test.ts",
-    "ingest:sec": "tsx src/cli/ingest-sec.ts"
+    "ingest:sec": "tsx src/cli/ingest-sec.ts",
+    "qualify": "tsx src/cli/qualify.ts"
   },
   "dependencies": {
     "@filmfund/db": "*",
