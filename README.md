@@ -21,7 +21,10 @@ The plan lives in [`docs/`](docs/00-README.md). The build is underway per
   money-vs-craft classifier (rule default + Claude adapter behind `ANTHROPIC_API_KEY`),
   cluster-rule qualification, and ranking. `npm run qualify` runs the chain; the
   dashboard shows honest bucket labels. 42 tests green.
-- ⏳ **Phase 3** — breadth sources (fund/prodco sites, soft money, sales agents).
+- 🟡 **Phase 3 (in progress)** — breadth. Curated institutional funders (national
+  film bodies, soft money, grants, tax credits, genre financiers; US/UK/EU/Canada)
+  seeded offline via `npm run ingest:bodies`, browsable at `/bodies`. Live fund/prodco
+  site scraping (Firecrawl) is deferred until API key + egress. 46 tests green.
 
 ### Development
 

@@ -101,7 +101,10 @@ export default async function Home({
 
   return (
     <>
-      <p style={label}>Film Funding Agent · genre financiers</p>
+      <p style={label}>
+        Film Funding Agent · genre financiers ·{" "}
+        <a href="/bodies" style={{ color: "#e9a23b", textDecoration: "none" }}>Funding bodies →</a>
+      </p>
       <h1 style={{ fontFamily: "Helvetica Neue, Arial, sans-serif", letterSpacing: "-0.02em" }}>
         Recent financiers of {genre.replace(/_/g, " ")}
       </h1>
