@@ -60,6 +60,7 @@ export async function runIngestCurated(
         `SELECT id FROM entities WHERE website_domain = $1 ORDER BY created_at LIMIT 1`,
         [b.website]
       );
+      const principals = b.principals ?? [];
       if (existing.rows[0]) {
         await client.query(
           `UPDATE entities SET
@@ -74,16 +75,20 @@ export async function runIngestCurated(
              funding_types = (
                SELECT COALESCE(array_agg(DISTINCT f), '{}'::financier_role[])
                FROM unnest(funding_types || $6::financier_role[]) AS f
+             ),
+             principals = (
+               SELECT COALESCE(array_agg(DISTINCT pr), '{}'::text[])
+               FROM unnest(principals || $7::text[]) AS pr
              )
            WHERE id = $1`,
-          [existing.rows[0].id, b.type, b.name, b.country, genres, b.fundingTypes]
+          [existing.rows[0].id, b.type, b.name, b.country, genres, b.fundingTypes, principals]
         );
       } else {
         await client.query(
           `INSERT INTO entities
-             (type, display_name, normalized_name, country, website_domain, genre_affinity, funding_types)
-           VALUES ($1::entity_type, $2, lower($2), $3, $4, $5::genre_band[], $6::financier_role[])`,
-          [b.type, b.name, b.country, b.website, genres, b.fundingTypes]
+             (type, display_name, normalized_name, country, website_domain, genre_affinity, funding_types, principals)
+           VALUES ($1::entity_type, $2, lower($2), $3, $4, $5::genre_band[], $6::financier_role[], $7::text[])`,
+          [b.type, b.name, b.country, b.website, genres, b.fundingTypes, principals]
         );
       }
 

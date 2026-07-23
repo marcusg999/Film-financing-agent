@@ -105,6 +105,18 @@ tax-credit offices, and known genre financiers across US/UK/EU/Canada), each
 evidence-linked to its official site. Runs fully offline. Browse them at
 **http://localhost:3000/bodies** (filter by genre and region).
 
+## 5a2. Seed individual-backed vehicles (offline, no keys)
+
+```bash
+npm run ingest:individuals -w @filmfund/pipeline
+```
+
+Adds ~13 real individual-backed film vehicles (athlete/founder/artist production
+companies and financier funds — e.g. SpringHill, Unanimous, Annapurna, Atomic
+Monster) with their principals' names. Filter the home page with the
+**Individual-backed** checkbox. Contact is via each vehicle's professional
+channel (its website); no personal phone/email is collected.
+
 ## 5b. Qualify + rank (Phase 2)
 
 After a backfill, turn the raw corpus into a qualified, ranked list:
