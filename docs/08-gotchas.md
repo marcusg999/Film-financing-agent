@@ -92,6 +92,12 @@ Treat this as living — add to it as we build.
     re-verify both shapes — EDGAR's Form C XML nesting varies by schema year, and the
     parser traverses defensively but can still miss fields silently. Same applies to
     the SPARQL result shape, though Wikidata's is more stable.
+    - *Resolved once:* the funding portal (intermediary) is carried in Form C as
+      `companyName` + `commissionCik` **inside `issuerInformation`**, not in
+      `offeringInformation` (the original fixture's wrong guess — it produced
+      `portalsUpserted: 0` on the first live run). The parser now reads the correct
+      location with fallbacks; still worth an eyeball on the first run after any
+      schema-year change.
 26. **A Form C names the raise, not the film.** The issuer is hard evidence of a
     regulated raise; which *film* it funded lives in narrative attachments. Never
     create film/financing rows from a Form C until the classifier grounds the

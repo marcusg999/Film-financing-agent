@@ -63,6 +63,8 @@ const FTS_FIXTURE = {
 };
 
 const FORM_C_XML: Record<string, string> = {
+  // Real Form C schema: intermediary (funding portal) is companyName +
+  // commissionCik inside issuerInformation; CIK carries leading zeros.
   "9000001": `<?xml version="1.0"?>
 <edgarSubmission>
   <formData>
@@ -70,10 +72,11 @@ const FORM_C_XML: Record<string, string> = {
       <nameOfIssuer>Test Haunted Feature, LLC</nameOfIssuer>
       <issuerWebsite>https://testhauntedfeature.example/about</issuerWebsite>
       <jurisdictionOrganization>DE</jurisdictionOrganization>
+      <companyName>Test Portal Inc</companyName>
+      <commissionCik>0009000099</commissionCik>
+      <crdNumber>283503</crdNumber>
     </issuerInformation>
     <offeringInformation>
-      <intermediaryCompanyName>Test Portal Inc</intermediaryCompanyName>
-      <intermediaryCommissionCik>9000099</intermediaryCommissionCik>
       <offeringAmount>1070000</offeringAmount>
       <deadlineDate>2024-12-31</deadlineDate>
     </offeringInformation>
@@ -84,10 +87,10 @@ const FORM_C_XML: Record<string, string> = {
   <formData>
     <issuerInformation>
       <nameOfIssuer>Test Orbit Picture Inc</nameOfIssuer>
+      <companyName>Test Portal Inc</companyName>
+      <commissionCik>0009000099</commissionCik>
     </issuerInformation>
     <offeringInformation>
-      <intermediaryCompanyName>Test Portal Inc</intermediaryCompanyName>
-      <intermediaryCommissionCik>9000099</intermediaryCommissionCik>
       <offeringAmount>500000</offeringAmount>
     </offeringInformation>
   </formData>
