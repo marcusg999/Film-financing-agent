@@ -12,6 +12,7 @@ export interface FinancierFilters {
   bucket?: string; // qualification bucket
   warm?: string; // "1" | "3" | "5" — active within N years
   contactable?: string; // "1" — has a verified contact
+  backed?: string; // "individual" — vehicle has named principals
 }
 
 const ENTITY_TYPES = new Set([
@@ -56,12 +57,17 @@ export function buildFinancierQuery(f: FinancierFilters): { text: string; values
   if (f.contactable === "1") {
     cond.push(`EXISTS (SELECT 1 FROM usable_contacts uc WHERE uc.entity_id = e.id)`);
   }
+  if (f.backed === "individual") {
+    cond.push(`array_length(e.principals, 1) IS NOT NULL`);
+  }
 
   const where = cond.length ? `WHERE ${cond.join(" AND ")}` : "";
   const text = `
     SELECT e.id, e.display_name, e.type, e.country,
            e.genre_affinity::text[]  AS genre_affinity,
            e.funding_types::text[]   AS funding_types,
+           e.principals::text[]      AS principals,
+           e.website_domain,
            e.is_active_signal::text  AS is_active_signal,
            q.bucket,
            s.final_score::text       AS final_score,

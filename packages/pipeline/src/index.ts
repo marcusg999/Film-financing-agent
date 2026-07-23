@@ -10,6 +10,7 @@ export type { SecIngestStats } from "./ingest/secEdgarIngest.js";
 export { runIngestCurated } from "./ingest/curatedIngest.js";
 export type { CuratedStats } from "./ingest/curatedIngest.js";
 export { CURATED_BODIES } from "./sources/curatedBodies.js";
+export { CURATED_INDIVIDUALS } from "./sources/curatedIndividuals.js";
 export { RuleClassifier } from "./classify/classifier.js";
 export type { Classifier, ClassifyInput, ClassifyResult } from "./classify/classifier.js";
 export { getClassifier, ClaudeClassifier } from "./classify/claude.js";

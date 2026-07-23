@@ -12,7 +12,8 @@
     "test": "node --import tsx --import ./test/setup-env.ts --test test/*.test.ts",
     "ingest:sec": "tsx src/cli/ingest-sec.ts",
     "qualify": "tsx src/cli/qualify.ts",
-    "ingest:bodies": "tsx src/cli/ingest-curated.ts"
+    "ingest:bodies": "tsx src/cli/ingest-curated.ts",
+    "ingest:individuals": "tsx src/cli/ingest-individuals.ts"
   },
   "dependencies": {
     "@filmfund/db": "*",

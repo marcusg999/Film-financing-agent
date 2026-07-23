@@ -10,6 +10,8 @@ interface Row {
   country: string | null;
   genre_affinity: string[];
   funding_types: string[];
+  principals: string[];
+  website_domain: string | null;
   is_active_signal: string | null;
   bucket: string | null;
   final_score: string | null;
@@ -45,7 +47,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const sp = await searchParams;
   const filters: FinancierFilters = {
     type: sp.type, provides: sp.provides, genre: sp.genre, country: sp.country,
-    bucket: sp.bucket, warm: sp.warm, contactable: sp.contactable,
+    bucket: sp.bucket, warm: sp.warm, contactable: sp.contactable, backed: sp.backed,
   };
   const { text, values } = buildFinancierQuery(filters);
 
@@ -100,6 +102,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
         <label style={{ fontFamily: sans, fontSize: 12, color: "#9aa3b2", display: "flex", gap: 6, alignItems: "center" }}>
           <input type="checkbox" name="contactable" value="1" defaultChecked={sp.contactable === "1"} /> Contactable
         </label>
+        <label style={{ fontFamily: sans, fontSize: 12, color: "#9aa3b2", display: "flex", gap: 6, alignItems: "center" }}>
+          <input type="checkbox" name="backed" value="individual" defaultChecked={sp.backed === "individual"} /> Individual-backed
+        </label>
         <button type="submit" style={{ ...selectStyle, background: "#e9a23b", color: "#0a0d13", fontWeight: 700, cursor: "pointer" }}>Apply</button>
         <a href="/" style={{ fontFamily: sans, fontSize: 12, color: "#6a7484", textDecoration: "none" }}>Clear</a>
       </form>
@@ -115,7 +120,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
               const b = BUCKETS[r.bucket ?? ""] ?? null;
               return (
                 <tr key={r.id}>
-                  <td style={td}>{r.display_name}</td>
+                  <td style={td}>
+                    {r.website_domain ? (
+                      <a href={`https://${r.website_domain}`} target="_blank" rel="noreferrer" style={{ color: "#e7e9ed", textDecoration: "none" }}>{r.display_name}</a>
+                    ) : r.display_name}
+                    {r.principals.length ? (
+                      <span style={{ display: "block", color: "#9aa3b2", fontSize: 12, marginTop: 2 }}>{r.principals.join(" · ")}</span>
+                    ) : null}
+                  </td>
                   <td style={{ ...td, color: "#9aa3b2" }}>{r.type.replace(/_/g, " ")}</td>
                   <td style={{ ...td, color: "#9aa3b2" }}>{r.country ?? "—"}</td>
                   <td style={td}>{r.funding_types.length ? r.funding_types.map((f) => <span key={f} style={chip()}>{f.replace(/_/g, " ")}</span>) : <span style={{ color: "#6a7484" }}>—</span>}</td>

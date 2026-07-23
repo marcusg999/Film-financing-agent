@@ -33,6 +33,7 @@ export interface CuratedBody {
   website: string; // canonical domain (also the dedup key)
   fundingTypes: FundingLit[];
   genres?: GenreLit[];
+  principals?: string[]; // named individuals behind the vehicle (public/professional)
   mandate: string; // short factual excerpt stored as evidence
 }
 
