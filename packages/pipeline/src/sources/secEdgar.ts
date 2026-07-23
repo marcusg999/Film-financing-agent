@@ -114,12 +114,24 @@ export async function fetchFormCDetails(
   const formData = doc?.edgarSubmission?.formData ?? {};
   const issuer = formData?.issuerInformation ?? {};
   const offering = formData?.offeringInformation ?? {};
+  const intermediary = formData?.intermediaryInformation ?? {};
+
+  // The intermediary (funding portal / broker-dealer) is carried in the Form C
+  // schema inside issuerInformation as `companyName` + `commissionCik`. Older /
+  // alternate layouts put it in offeringInformation or a dedicated
+  // intermediaryInformation block — check all three.
+  const portalName =
+    issuer?.companyName ?? intermediary?.companyName ?? offering?.intermediaryCompanyName;
+  const portalCikRaw =
+    issuer?.commissionCik ?? intermediary?.commissionCik ?? offering?.intermediaryCommissionCik;
+
   const details: FormCDetails = {
     issuerName: issuer?.nameOfIssuer ?? issuer?.issuerInfo?.nameOfIssuer,
     issuerWebsite: issuer?.issuerWebsite ?? issuer?.issuerInfo?.issuerWebsite,
     jurisdiction: issuer?.jurisdictionOrganization ?? issuer?.issuerInfo?.jurisdictionOrganization,
-    portalName: offering?.intermediaryCompanyName,
-    portalCik: offering?.intermediaryCommissionCik != null ? String(offering.intermediaryCommissionCik) : undefined,
+    portalName: portalName != null ? String(portalName) : undefined,
+    // Strip leading zeros so a portal dedupes by CIK across all its filings.
+    portalCik: portalCikRaw != null ? String(portalCikRaw).replace(/^0+/, "") || "0" : undefined,
     offeringAmount: offering?.offeringAmount != null ? String(offering.offeringAmount) : undefined,
     deadlineDate: offering?.deadlineDate,
   };
