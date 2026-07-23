@@ -1,100 +1,64 @@
 import { getPool } from "../lib/db";
+import { buildFinancierQuery, type FinancierFilters } from "../lib/financiers";
 
 export const dynamic = "force-dynamic";
 
-const GENRES = [
-  "genre_horror",
-  "thriller",
-  "sci_fi",
-  "prestige_drama",
-  "comedy",
-  "doc",
-  "action",
-  "family",
-  "other",
-] as const;
-
-interface RankedRow {
-  entity_id: string;
+interface Row {
+  id: string;
   display_name: string;
-  entity_type: string;
+  type: string;
+  country: string | null;
+  genre_affinity: string[];
+  funding_types: string[];
+  is_active_signal: string | null;
   bucket: string | null;
-  deal_count: string;
-  last_deal: string;
-  last_deal_estimated: boolean;
   final_score: string | null;
-  has_verified_contact: boolean;
+  contactable: boolean;
 }
 
-const label: React.CSSProperties = {
-  fontFamily: "Helvetica Neue, Arial, sans-serif",
-  fontSize: 12,
-  letterSpacing: "0.14em",
-  textTransform: "uppercase",
-  color: "#e9a23b",
-};
+const sans = "Helvetica Neue, Arial, sans-serif";
+const label: React.CSSProperties = { fontFamily: sans, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "#e9a23b" };
+const th: React.CSSProperties = { ...label, color: "#6a7484", textAlign: "left", padding: "10px 8px", borderBottom: "1px solid rgba(230,235,245,0.13)" };
+const td: React.CSSProperties = { padding: "11px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)", verticalAlign: "top" };
+const chip = (c?: React.CSSProperties): React.CSSProperties => ({ fontFamily: sans, fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 999, border: "1px solid rgba(230,235,245,0.18)", color: "#9aa3b2", marginRight: 5, whiteSpace: "nowrap", ...c });
+const selectStyle: React.CSSProperties = { fontFamily: sans, fontSize: 12, background: "#12161f", color: "#e7e9ed", border: "1px solid rgba(230,235,245,0.18)", borderRadius: 8, padding: "7px 9px" };
 
 const BUCKETS: Record<string, { text: string; bg: string; label: string }> = {
   qualified_sub10m: { text: "#0a0d13", bg: "#5bc98a", label: "Qualified ≤$10M" },
   insufficient_data: { text: "#c9cdd4", bg: "rgba(230,235,245,0.10)", label: "Insufficient data" },
   mixed_scale: { text: "#e9a23b", bg: "rgba(233,162,59,0.14)", label: "Mixed scale" },
-  out_of_band: { text: "#e08a7d", bg: "rgba(224,138,125,0.14)", label: "Above $10M band" },
+  out_of_band: { text: "#e08a7d", bg: "rgba(224,138,125,0.14)", label: "Above band" },
 };
 
-function Bucket({ b }: { b: string | null }) {
-  const s = BUCKETS[b ?? "insufficient_data"] ?? BUCKETS.insufficient_data;
+function Select({ name, value, options, any }: { name: string; value: string; options: [string, string][]; any: string }) {
   return (
-    <span
-      style={{
-        fontFamily: "Helvetica Neue, Arial, sans-serif",
-        fontSize: 11,
-        fontWeight: 700,
-        padding: "3px 9px",
-        borderRadius: 999,
-        color: s.text,
-        background: s.bg,
-        whiteSpace: "nowrap",
-      }}
-    >
-      {s.label}
-    </span>
+    <select name={name} defaultValue={value} style={selectStyle}>
+      <option value="">{any}</option>
+      {options.map(([v, l]) => (
+        <option key={v} value={v}>{l}</option>
+      ))}
+    </select>
   );
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ genre?: string; since?: string }>;
-}) {
-  const params = await searchParams;
-  const genre = GENRES.includes(params.genre as (typeof GENRES)[number])
-    ? (params.genre as (typeof GENRES)[number])
-    : "genre_horror";
-  const since = /^\d{4}-\d{2}-\d{2}$/.test(params.since ?? "") ? params.since! : "2016-01-01";
+export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+  const sp = await searchParams;
+  const filters: FinancierFilters = {
+    type: sp.type, provides: sp.provides, genre: sp.genre, country: sp.country,
+    bucket: sp.bucket, warm: sp.warm, contactable: sp.contactable,
+  };
+  const { text, values } = buildFinancierQuery(filters);
 
   const pool = getPool();
-  const [{ rows: financiers }, { rows: counts }] = await Promise.all([
-    // Genre financiers joined with qualification bucket + rank + contactability.
-    // Ordered so qualified entities lead, then by score — the bucket is a gate,
-    // never hidden.
-    pool.query<RankedRow>(
-      `SELECT g.entity_id, g.display_name, g.entity_type,
-              q.bucket, g.deal_count::text, g.last_deal, g.last_deal_estimated,
-              s.final_score::text,
-              EXISTS (SELECT 1 FROM usable_contacts uc WHERE uc.entity_id = g.entity_id) AS has_verified_contact
-         FROM recent_genre_financiers($1, $2) g
-         LEFT JOIN entity_qualification q ON q.entity_id = g.entity_id
-         LEFT JOIN scores s ON s.entity_id = g.entity_id AND s.project_id IS NULL
-        ORDER BY (q.bucket = 'qualified_sub10m') DESC NULLS LAST,
-                 s.final_score DESC NULLS LAST,
-                 g.last_deal DESC`,
-      [genre, since]
+  const [{ rows }, { rows: counts }, { rows: countries }] = await Promise.all([
+    pool.query<Row>(text, values),
+    pool.query<{ total: string; qualified: string; contactable: string }>(
+      `SELECT (SELECT count(*) FROM entities) AS total,
+              (SELECT count(*) FROM entity_qualification WHERE bucket='qualified_sub10m') AS qualified,
+              (SELECT count(*) FROM usable_contacts) AS contactable`
     ),
-    pool.query<{ entities: string; qualified: string; relationships: string }>(
-      `SELECT
-         (SELECT count(*) FROM entities) AS entities,
-         (SELECT count(*) FROM entity_qualification WHERE bucket = 'qualified_sub10m') AS qualified,
-         (SELECT count(*) FROM financing_relationships) AS relationships`
+    pool.query<{ country: string }>(
+      `SELECT DISTINCT country FROM entities WHERE country IS NOT NULL ORDER BY country`
     ),
   ]);
   const c = counts[0];
@@ -102,86 +66,65 @@ export default async function Home({
   return (
     <>
       <p style={label}>
-        Film Funding Agent · genre financiers ·{" "}
+        Film Funding Agent · financiers ·{" "}
         <a href="/bodies" style={{ color: "#e9a23b", textDecoration: "none" }}>Funding bodies →</a>
       </p>
-      <h1 style={{ fontFamily: "Helvetica Neue, Arial, sans-serif", letterSpacing: "-0.02em" }}>
-        Recent financiers of {genre.replace(/_/g, " ")}
-      </h1>
+      <h1 style={{ fontFamily: sans, letterSpacing: "-0.02em" }}>Financiers</h1>
       <p style={{ color: "#9aa3b2" }}>
-        {c?.entities ?? 0} entities · {c?.qualified ?? 0} qualified ≤$10M · {c?.relationships ?? 0}{" "}
-        financing relationships. Money-classified only (τ ≥ 0.6); deals since {since}. This lists the{" "}
-        <em>visible</em> financing world — never a complete one. Buckets are honest: only{" "}
-        <strong>Qualified ≤$10M</strong> is a confirmed sub-$10M financier.
+        {c?.total ?? 0} entities · {c?.qualified ?? 0} qualified ≤$10M · {c?.contactable ?? 0} with a
+        verified contact. Filter to organize; only <strong>Qualified ≤$10M</strong> is a confirmed
+        sub-$10M financier. Coverage is never complete.
       </p>
-      <nav style={{ display: "flex", gap: 10, flexWrap: "wrap", margin: "18px 0 28px" }}>
-        {GENRES.map((g) => (
-          <a
-            key={g}
-            href={`/?genre=${g}&since=${since}`}
-            style={{
-              ...label,
-              color: g === genre ? "#0a0d13" : "#e9a23b",
-              background: g === genre ? "#e9a23b" : "transparent",
-              border: "1px solid #e9a23b",
-              borderRadius: 999,
-              padding: "5px 12px",
-              textDecoration: "none",
-            }}
-          >
-            {g.replace(/_/g, " ")}
-          </a>
-        ))}
-      </nav>
-      {financiers.length === 0 ? (
-        <p style={{ color: "#6a7484" }}>
-          No financiers for this genre/window yet. Run the backfill (docs/12) then{" "}
-          <code>npm run qualify</code>.
-        </p>
+
+      <form method="get" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", margin: "18px 0 26px" }}>
+        <Select name="type" value={sp.type ?? ""} any="Any type" options={[
+          ["production_company", "Production company"], ["fund", "Fund"], ["sales_agent", "Sales agent"],
+          ["distributor", "Distributor"], ["soft_money_body", "Soft money"], ["grant_body", "Grant body"],
+          ["tax_credit_broker", "Tax credit"], ["gap_lender", "Gap lender"], ["individual", "Individual"],
+          ["crowdfunding_platform", "Crowdfunding platform"],
+        ]} />
+        <Select name="provides" value={sp.provides ?? ""} any="Provides…" options={[
+          ["equity", "Equity"], ["grant", "Grant"], ["tax_credit", "Tax credit"], ["mg_advance", "MG advance"],
+          ["presale", "Presale"], ["gap_loan", "Gap loan"], ["co_financier", "Co-finance"],
+        ]} />
+        <Select name="genre" value={sp.genre ?? ""} any="Any genre" options={[
+          ["genre_horror", "Horror"], ["sci_fi", "Sci-fi"], ["thriller", "Thriller"],
+          ["prestige_drama", "Prestige drama"], ["doc", "Documentary"],
+        ]} />
+        <Select name="country" value={sp.country ?? ""} any="Any region" options={countries.map((r) => [r.country, r.country])} />
+        <Select name="bucket" value={sp.bucket ?? ""} any="Any status" options={[
+          ["qualified_sub10m", "Qualified ≤$10M"], ["insufficient_data", "Insufficient data"],
+          ["mixed_scale", "Mixed scale"], ["out_of_band", "Above band"],
+        ]} />
+        <Select name="warm" value={sp.warm ?? ""} any="Any time" options={[["1", "Active ≤1y"], ["3", "Active ≤3y"], ["5", "Active ≤5y"]]} />
+        <label style={{ fontFamily: sans, fontSize: 12, color: "#9aa3b2", display: "flex", gap: 6, alignItems: "center" }}>
+          <input type="checkbox" name="contactable" value="1" defaultChecked={sp.contactable === "1"} /> Contactable
+        </label>
+        <button type="submit" style={{ ...selectStyle, background: "#e9a23b", color: "#0a0d13", fontWeight: 700, cursor: "pointer" }}>Apply</button>
+        <a href="/" style={{ fontFamily: sans, fontSize: 12, color: "#6a7484", textDecoration: "none" }}>Clear</a>
+      </form>
+
+      <p style={{ ...label, color: "#6a7484", marginBottom: 8 }}>{rows.length} result{rows.length === 1 ? "" : "s"}{rows.length === 500 ? " (capped)" : ""}</p>
+      {rows.length === 0 ? (
+        <p style={{ color: "#6a7484" }}>No financiers match. Widen the filters, or run the ingest + <code>npm run qualify</code>.</p>
       ) : (
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              {["Entity", "Bucket", "Deals", "Last deal", "Contact"].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    ...label,
-                    color: "#6a7484",
-                    textAlign: "left",
-                    padding: "10px 8px",
-                    borderBottom: "1px solid rgba(230,235,245,0.13)",
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
+          <thead><tr>{["Financier", "Type", "Region", "Provides", "Genre", "Status", "Contact"].map((h) => <th key={h} style={th}>{h}</th>)}</tr></thead>
           <tbody>
-            {financiers.map((f) => (
-              <tr key={f.entity_id}>
-                <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)" }}>
-                  {f.display_name}
-                  <span style={{ color: "#6a7484", fontSize: 13 }}> · {f.entity_type.replace(/_/g, " ")}</span>
-                </td>
-                <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)" }}>
-                  <Bucket b={f.bucket} />
-                </td>
-                <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)" }}>
-                  {f.deal_count}
-                </td>
-                <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)" }}>
-                  {new Date(f.last_deal).toISOString().slice(0, 10)}
-                  {f.last_deal_estimated ? (
-                    <span style={{ color: "#6a7484", fontSize: 12 }}> (est.)</span>
-                  ) : null}
-                </td>
-                <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(230,235,245,0.06)", color: f.has_verified_contact ? "#5bc98a" : "#6a7484" }}>
-                  {f.has_verified_contact ? "verified" : "—"}
-                </td>
-              </tr>
-            ))}
+            {rows.map((r) => {
+              const b = BUCKETS[r.bucket ?? ""] ?? null;
+              return (
+                <tr key={r.id}>
+                  <td style={td}>{r.display_name}</td>
+                  <td style={{ ...td, color: "#9aa3b2" }}>{r.type.replace(/_/g, " ")}</td>
+                  <td style={{ ...td, color: "#9aa3b2" }}>{r.country ?? "—"}</td>
+                  <td style={td}>{r.funding_types.length ? r.funding_types.map((f) => <span key={f} style={chip()}>{f.replace(/_/g, " ")}</span>) : <span style={{ color: "#6a7484" }}>—</span>}</td>
+                  <td style={td}>{r.genre_affinity.length ? r.genre_affinity.map((g) => <span key={g} style={chip({ color: "#e9a23b", borderColor: "rgba(233,162,59,0.4)" })}>{g.replace(/_/g, " ")}</span>) : <span style={{ color: "#6a7484", fontSize: 12 }}>—</span>}</td>
+                  <td style={td}>{b ? <span style={{ fontFamily: sans, fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 999, color: b.text, background: b.bg, whiteSpace: "nowrap" }}>{b.label}</span> : <span style={{ color: "#6a7484" }}>—</span>}</td>
+                  <td style={{ ...td, color: r.contactable ? "#5bc98a" : "#6a7484" }}>{r.contactable ? "verified" : "—"}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}
